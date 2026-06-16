@@ -1,0 +1,35 @@
+import { Bell, Search } from "lucide-react";
+
+export function HomeHeader() {
+  return (
+    <header className="px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-base font-bold text-primary-foreground">
+            ආ
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Ayubowan 🙏</p>
+            <p className="text-sm font-bold text-foreground">Welcome, traveller</p>
+          </div>
+        </div>
+        <button
+          aria-label="Notifications"
+          className="relative grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-card text-foreground"
+        >
+          <Bell className="h-5 w-5" />
+          <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent" />
+        </button>
+      </div>
+
+      <div className="mt-5 flex items-center gap-2 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-sm">
+        <Search className="h-5 w-5 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search beaches, temples, guides…"
+          className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+        />
+      </div>
+    </header>
+  );
+}
