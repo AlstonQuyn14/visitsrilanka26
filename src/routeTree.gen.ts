@@ -10,15 +10,28 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 
 const TransportRoute = TransportRouteImport.update({
   id: '/transport',
   path: '/transport',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesRoute = GuidesRouteImport.update({
+  id: '/guides',
+  path: '/guides',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -40,6 +53,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesRegisterRoute = GuidesRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => GuidesRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -50,15 +68,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -66,22 +90,44 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/explore' | '/transport' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/explore'
+    | '/guides'
+    | '/safety'
+    | '/transport'
+    | '/profile'
+    | '/guides/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/explore' | '/transport' | '/profile'
+  to:
+    | '/'
+    | '/auth'
+    | '/explore'
+    | '/guides'
+    | '/safety'
+    | '/transport'
+    | '/profile'
+    | '/guides/register'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/explore'
+    | '/guides'
+    | '/safety'
     | '/transport'
     | '/_authenticated/profile'
+    | '/guides/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -89,6 +135,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ExploreRoute: typeof ExploreRoute
+  GuidesRoute: typeof GuidesRouteWithChildren
+  SafetyRoute: typeof SafetyRoute
   TransportRoute: typeof TransportRoute
 }
 
@@ -99,6 +147,20 @@ declare module '@tanstack/react-router' {
       path: '/transport'
       fullPath: '/transport'
       preLoaderRoute: typeof TransportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides': {
+      id: '/guides'
+      path: '/guides'
+      fullPath: '/guides'
+      preLoaderRoute: typeof GuidesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -129,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/register': {
+      id: '/guides/register'
+      path: '/register'
+      fullPath: '/guides/register'
+      preLoaderRoute: typeof GuidesRegisterRouteImport
+      parentRoute: typeof GuidesRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -150,11 +219,24 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface GuidesRouteChildren {
+  GuidesRegisterRoute: typeof GuidesRegisterRoute
+}
+
+const GuidesRouteChildren: GuidesRouteChildren = {
+  GuidesRegisterRoute: GuidesRegisterRoute,
+}
+
+const GuidesRouteWithChildren =
+  GuidesRoute._addFileChildren(GuidesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ExploreRoute: ExploreRoute,
+  GuidesRoute: GuidesRouteWithChildren,
+  SafetyRoute: SafetyRoute,
   TransportRoute: TransportRoute,
 }
 export const routeTree = rootRouteImport

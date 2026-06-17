@@ -1,0 +1,2 @@
+CREATE POLICY "Only admin can update guides" ON public.guides FOR UPDATE TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "Only admin can delete guides" ON public.guides FOR DELETE TO service_role USING (true);
