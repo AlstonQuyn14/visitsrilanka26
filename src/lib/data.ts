@@ -113,9 +113,9 @@ export interface QuickAction {
 }
 
 export const quickActions: QuickAction[] = [
-  { id: "sos", label: "Safety SOS", icon: "ShieldAlert", to: "/explore", tone: "accent" },
+  { id: "sos", label: "Safety SOS", icon: "ShieldAlert", to: "/safety", tone: "accent" },
   { id: "transport", label: "Book Ride", icon: "Car", to: "/transport", tone: "primary" },
-  { id: "guides", label: "Find a Guide", icon: "UserRound", to: "/explore", tone: "nature" },
+  { id: "guides", label: "Find a Guide", icon: "UserRound", to: "/guides", tone: "nature" },
   { id: "ai", label: "AI Planner", icon: "Sparkles", to: "/explore", tone: "sun" },
   { id: "translate", label: "Translate", icon: "Languages", to: "/explore", tone: "primary" },
   { id: "grocery", label: "Essentials", icon: "ShoppingBag", to: "/explore", tone: "nature" },
