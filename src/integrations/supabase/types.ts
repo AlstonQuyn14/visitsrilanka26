@@ -76,6 +76,66 @@ export type Database = {
         }
         Relationships: []
       }
+      guides: {
+        Row: {
+          bio: string | null
+          certifications: string[]
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          experience_years: number
+          id: string
+          is_verified: boolean
+          languages: string[]
+          location: string
+          name: string
+          photo_url: string | null
+          price_per_day: number
+          rating: number
+          reviews_count: number
+          specialties: string[]
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          certifications?: string[]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          experience_years?: number
+          id?: string
+          is_verified?: boolean
+          languages?: string[]
+          location: string
+          name: string
+          photo_url?: string | null
+          price_per_day?: number
+          rating?: number
+          reviews_count?: number
+          specialties?: string[]
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          certifications?: string[]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          experience_years?: number
+          id?: string
+          is_verified?: boolean
+          languages?: string[]
+          location?: string
+          name?: string
+          photo_url?: string | null
+          price_per_day?: number
+          rating?: number
+          reviews_count?: number
+          specialties?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
