@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as GroceryRouteImport } from './routes/grocery'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -32,6 +33,11 @@ const SafetyRoute = SafetyRouteImport.update({
 const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
   path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroceryRoute = GroceryRouteImport.update({
+  id: '/grocery',
+  path: '/grocery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/grocery': typeof GroceryRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/grocery': typeof GroceryRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -90,6 +98,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
+  '/grocery': typeof GroceryRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -102,6 +111,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/explore'
+    | '/grocery'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/explore'
+    | '/grocery'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/explore'
+    | '/grocery'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -135,6 +147,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ExploreRoute: typeof ExploreRoute
+  GroceryRoute: typeof GroceryRoute
   GuidesRoute: typeof GuidesRouteWithChildren
   SafetyRoute: typeof SafetyRoute
   TransportRoute: typeof TransportRoute
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/guides'
       fullPath: '/guides'
       preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/grocery': {
+      id: '/grocery'
+      path: '/grocery'
+      fullPath: '/grocery'
+      preLoaderRoute: typeof GroceryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -235,6 +255,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ExploreRoute: ExploreRoute,
+  GroceryRoute: GroceryRoute,
   GuidesRoute: GuidesRouteWithChildren,
   SafetyRoute: SafetyRoute,
   TransportRoute: TransportRoute,

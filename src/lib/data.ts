@@ -118,7 +118,7 @@ export const quickActions: QuickAction[] = [
   { id: "guides", label: "Find a Guide", icon: "UserRound", to: "/guides", tone: "nature" },
   { id: "ai", label: "AI Planner", icon: "Sparkles", to: "/explore", tone: "sun" },
   { id: "translate", label: "Translate", icon: "Languages", to: "/explore", tone: "primary" },
-  { id: "grocery", label: "Essentials", icon: "ShoppingBag", to: "/explore", tone: "nature" },
+  { id: "grocery", label: "Essentials", icon: "ShoppingBag", to: "/grocery", tone: "nature" },
   { id: "group", label: "Group Trip", icon: "Users", to: "/explore", tone: "sun" },
   { id: "explore", label: "Explore", icon: "MapPinned", to: "/explore", tone: "accent" },
 ];
