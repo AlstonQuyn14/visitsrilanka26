@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as GroupTripRouteImport } from './routes/group-trip'
 import { Route as GroceryRouteImport } from './routes/grocery'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -33,6 +34,11 @@ const SafetyRoute = SafetyRouteImport.update({
 const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
   path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroupTripRoute = GroupTripRouteImport.update({
+  id: '/group-trip',
+  path: '/group-trip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GroceryRoute = GroceryRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
   '/grocery': typeof GroceryRoute
+  '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
   '/grocery': typeof GroceryRoute
+  '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/explore': typeof ExploreRoute
   '/grocery': typeof GroceryRoute
+  '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/explore'
     | '/grocery'
+    | '/group-trip'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/explore'
     | '/grocery'
+    | '/group-trip'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/explore'
     | '/grocery'
+    | '/group-trip'
     | '/guides'
     | '/safety'
     | '/transport'
@@ -148,6 +160,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ExploreRoute: typeof ExploreRoute
   GroceryRoute: typeof GroceryRoute
+  GroupTripRoute: typeof GroupTripRoute
   GuidesRoute: typeof GuidesRouteWithChildren
   SafetyRoute: typeof SafetyRoute
   TransportRoute: typeof TransportRoute
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/guides'
       fullPath: '/guides'
       preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/group-trip': {
+      id: '/group-trip'
+      path: '/group-trip'
+      fullPath: '/group-trip'
+      preLoaderRoute: typeof GroupTripRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grocery': {
@@ -256,6 +276,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ExploreRoute: ExploreRoute,
   GroceryRoute: GroceryRoute,
+  GroupTripRoute: GroupTripRoute,
   GuidesRoute: GuidesRouteWithChildren,
   SafetyRoute: SafetyRoute,
   TransportRoute: TransportRoute,
