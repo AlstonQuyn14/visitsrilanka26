@@ -246,10 +246,14 @@ function LangPicker({
   value: string;
   onChange: (code: string) => void;
 }) {
+  const selected = langByCode(value);
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="h-10 w-full rounded-xl border-0 bg-background/70 font-semibold">
-        <SelectValue />
+        <span className="flex min-w-0 items-center gap-1.5">
+          <span className="shrink-0">{selected.flag}</span>
+          <span className="truncate">{selected.native}</span>
+        </span>
       </SelectTrigger>
       <SelectContent className="max-h-72">
         {languages.map((lang) => (
