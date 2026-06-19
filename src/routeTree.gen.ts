@@ -26,6 +26,7 @@ import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedPlannerIndexRouteImport } from './routes/_authenticated/planner.index'
 
 const TransportRoute = TransportRouteImport.update({
   id: '/transport',
@@ -111,6 +112,12 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlannerIndexRoute =
+  AuthenticatedPlannerIndexRouteImport.update({
+    id: '/planner/',
+    path: '/planner/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/planner/': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesByTo {
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/planner': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,6 +176,7 @@ export interface FileRoutesById {
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/_authenticated/planner/': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/planner/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/planner'
   id:
     | '__root__'
     | '/'
@@ -224,6 +236,7 @@ export interface FileRouteTypes {
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/_authenticated/planner/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -365,15 +378,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planner/': {
+      id: '/_authenticated/planner/'
+      path: '/planner'
+      fullPath: '/planner/'
+      preLoaderRoute: typeof AuthenticatedPlannerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedPlannerIndexRoute: typeof AuthenticatedPlannerIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedPlannerIndexRoute: AuthenticatedPlannerIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
