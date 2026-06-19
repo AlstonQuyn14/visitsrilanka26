@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -9,6 +9,9 @@ import {
   Sparkles,
   Languages as LanguagesIcon,
   Trash2,
+  Mic,
+  Square,
+  Volume2,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import {
@@ -56,6 +59,13 @@ function Translate() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const sourceLang = langByCode(source);
   const targetLang = langByCode(target);
@@ -109,6 +119,108 @@ function Translate() {
     setError(null);
   }
 
+  async function startRecording() {
+    setError(null);
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      setError("Microphone access is needed to record.");
+      return;
+    }
+    const mimeType = ["audio/webm", "audio/mp4"].find(
+      (t) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t),
+    );
+    let recorder: MediaRecorder;
+    try {
+      recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    } catch {
+      stream.getTracks().forEach((t) => t.stop());
+      setError("This browser can't record audio.");
+      return;
+    }
+    chunksRef.current = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+      if (blob.size < 1024) {
+        setError("That recording was empty — please try again.");
+        return;
+      }
+      await transcribe(blob);
+    };
+    recorderRef.current = recorder;
+    recorder.start();
+    setRecording(true);
+  }
+
+  function stopRecording() {
+    recorderRef.current?.stop();
+    recorderRef.current = null;
+    setRecording(false);
+  }
+
+  async function transcribe(blob: Blob) {
+    setTranscribing(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", blob, "recording");
+      form.append("language", source);
+      const res = await fetch("/api/transcribe", { method: "POST", body: form });
+      const data = (await res.json()) as { text?: string; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Transcription failed");
+      const text = (data.text ?? "").trim();
+      if (!text) {
+        setError("Couldn't hear anything — please try again.");
+        return;
+      }
+      setInput(text);
+    } catch {
+      setError("Couldn't transcribe the audio. Please try again.");
+    } finally {
+      setTranscribing(false);
+    }
+  }
+
+  async function speak() {
+    if (!output) return;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setSpeaking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: output }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(url);
+      };
+      audio.onerror = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(url);
+      };
+      await audio.play();
+    } catch {
+      setSpeaking(false);
+      setError("Couldn't play the translation aloud.");
+    }
+  }
+
+
   return (
     <AppShell>
       {/* Header */}
@@ -148,27 +260,63 @@ function Translate() {
               <span>{sourceLang.flag}</span>
               {sourceLang.native}
             </span>
-            {input && (
+            <div className="flex items-center gap-3">
+              {input && !recording && (
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Clear
+                </button>
+              )}
               <button
                 type="button"
-                onClick={clearAll}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                onClick={recording ? stopRecording : startRecording}
+                disabled={transcribing}
+                aria-label={recording ? "Stop recording" : "Record voice"}
+                className={cn(
+                  "grid h-9 w-9 place-items-center rounded-full transition-colors disabled:opacity-50",
+                  recording
+                    ? "animate-pulse bg-destructive text-destructive-foreground"
+                    : "bg-primary/10 text-primary hover:bg-primary/20",
+                )}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-                Clear
+                {transcribing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : recording ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
               </button>
-            )}
+            </div>
           </div>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Type in ${sourceLang.name}…`}
+            placeholder={
+              recording
+                ? "Listening… tap stop when you're done"
+                : transcribing
+                  ? "Transcribing your voice…"
+                  : `Type or speak in ${sourceLang.name}…`
+            }
             rows={4}
             maxLength={5000}
             className="w-full resize-none bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60"
           />
-          <div className="mt-1 text-right text-[11px] text-muted-foreground/70">
-            {input.length}/5000
+          <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground/70">
+            <span className="flex items-center gap-1 text-primary">
+              {recording && (
+                <>
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-destructive" />
+                  Recording…
+                </>
+              )}
+            </span>
+            <span>{input.length}/5000</span>
           </div>
         </div>
 
@@ -207,21 +355,36 @@ function Translate() {
               {targetLang.native}
             </span>
             {output && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="flex items-center gap-1 text-xs font-medium text-primary"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" /> Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5" /> Copy
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={speak}
+                  disabled={speaking}
+                  className="flex items-center gap-1 text-xs font-medium text-primary disabled:opacity-60"
+                >
+                  {speaking ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Volume2 className="h-3.5 w-3.5" />
+                  )}
+                  {speaking ? "Playing" : "Listen"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="flex items-center gap-1 text-xs font-medium text-primary"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5" /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" /> Copy
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
           {output ? (
