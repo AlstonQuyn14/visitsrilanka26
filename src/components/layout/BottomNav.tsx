@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Compass, Sparkles, ShieldAlert, User } from "lucide-react";
+import { Home, Compass, BedDouble, ShieldAlert, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
