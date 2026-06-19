@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -9,6 +9,9 @@ import {
   Sparkles,
   Languages as LanguagesIcon,
   Trash2,
+  Mic,
+  Square,
+  Volume2,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import {
