@@ -119,6 +119,108 @@ function Translate() {
     setError(null);
   }
 
+  async function startRecording() {
+    setError(null);
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      setError("Microphone access is needed to record.");
+      return;
+    }
+    const mimeType = ["audio/webm", "audio/mp4"].find(
+      (t) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t),
+    );
+    let recorder: MediaRecorder;
+    try {
+      recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    } catch {
+      stream.getTracks().forEach((t) => t.stop());
+      setError("This browser can't record audio.");
+      return;
+    }
+    chunksRef.current = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+      if (blob.size < 1024) {
+        setError("That recording was empty — please try again.");
+        return;
+      }
+      await transcribe(blob);
+    };
+    recorderRef.current = recorder;
+    recorder.start();
+    setRecording(true);
+  }
+
+  function stopRecording() {
+    recorderRef.current?.stop();
+    recorderRef.current = null;
+    setRecording(false);
+  }
+
+  async function transcribe(blob: Blob) {
+    setTranscribing(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", blob, "recording");
+      form.append("language", source);
+      const res = await fetch("/api/transcribe", { method: "POST", body: form });
+      const data = (await res.json()) as { text?: string; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Transcription failed");
+      const text = (data.text ?? "").trim();
+      if (!text) {
+        setError("Couldn't hear anything — please try again.");
+        return;
+      }
+      setInput(text);
+    } catch {
+      setError("Couldn't transcribe the audio. Please try again.");
+    } finally {
+      setTranscribing(false);
+    }
+  }
+
+  async function speak() {
+    if (!output) return;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setSpeaking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: output }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(url);
+      };
+      audio.onerror = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(url);
+      };
+      await audio.play();
+    } catch {
+      setSpeaking(false);
+      setError("Couldn't play the translation aloud.");
+    }
+  }
+
+
   return (
     <AppShell>
       {/* Header */}
