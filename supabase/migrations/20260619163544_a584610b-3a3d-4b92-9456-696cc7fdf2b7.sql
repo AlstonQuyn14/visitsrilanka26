@@ -1,0 +1,1 @@
+ALTER TABLE public.chat_threads ADD COLUMN IF NOT EXISTS agent text NOT NULL DEFAULT 'planner';

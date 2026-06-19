@@ -24,7 +24,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedPlannerIndexRouteImport } from './routes/_authenticated/planner.index'
+import { Route as AuthenticatedPlannerThreadIdRouteImport } from './routes/_authenticated/planner.$threadId'
 
 const TransportRoute = TransportRouteImport.update({
   id: '/transport',
@@ -100,11 +103,28 @@ const ApiSpeakRoute = ApiSpeakRouteImport.update({
   path: '/api/speak',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlannerIndexRoute =
+  AuthenticatedPlannerIndexRouteImport.update({
+    id: '/planner/',
+    path: '/planner/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPlannerThreadIdRoute =
+  AuthenticatedPlannerThreadIdRouteImport.update({
+    id: '/planner/$threadId',
+    path: '/planner/$threadId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -119,9 +139,12 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
+  '/planner/': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -136,9 +159,12 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
+  '/planner': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -155,9 +181,12 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
+  '/_authenticated/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
+  '/_authenticated/planner/': typeof AuthenticatedPlannerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,9 +203,12 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/planner/$threadId'
+    | '/planner/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -191,9 +223,12 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/planner/$threadId'
+    | '/planner'
   id:
     | '__root__'
     | '/'
@@ -209,9 +244,12 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/_authenticated/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
+    | '/_authenticated/planner/$threadId'
+    | '/_authenticated/planner/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -227,6 +265,7 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   TranslateRoute: typeof TranslateRoute
   TransportRoute: typeof TransportRoute
+  ApiChatRoute: typeof ApiChatRoute
   ApiSpeakRoute: typeof ApiSpeakRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
 }
@@ -338,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSpeakRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -345,15 +391,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planner/': {
+      id: '/_authenticated/planner/'
+      path: '/planner'
+      fullPath: '/planner/'
+      preLoaderRoute: typeof AuthenticatedPlannerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/planner/$threadId': {
+      id: '/_authenticated/planner/$threadId'
+      path: '/planner/$threadId'
+      fullPath: '/planner/$threadId'
+      preLoaderRoute: typeof AuthenticatedPlannerThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedPlannerThreadIdRoute: typeof AuthenticatedPlannerThreadIdRoute
+  AuthenticatedPlannerIndexRoute: typeof AuthenticatedPlannerIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedPlannerThreadIdRoute: AuthenticatedPlannerThreadIdRoute,
+  AuthenticatedPlannerIndexRoute: AuthenticatedPlannerIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -383,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   TranslateRoute: TranslateRoute,
   TransportRoute: TransportRoute,
+  ApiChatRoute: ApiChatRoute,
   ApiSpeakRoute: ApiSpeakRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
 }
