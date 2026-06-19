@@ -23,6 +23,8 @@ export interface Destination {
   reviews: number;
   tagline: string;
   popular?: boolean;
+  lat: number;
+  lng: number;
 }
 
 export const destinations: Destination[] = [
@@ -36,6 +38,8 @@ export const destinations: Destination[] = [
     reviews: 12480,
     tagline: "Ancient sky palace rising over the jungle",
     popular: true,
+    lat: 7.957,
+    lng: 80.7603,
   },
   {
     id: "mirissa",
@@ -47,6 +51,8 @@ export const destinations: Destination[] = [
     reviews: 9320,
     tagline: "Golden sand, whale watching & sunsets",
     popular: true,
+    lat: 5.9483,
+    lng: 80.4589,
   },
   {
     id: "ella",
@@ -58,6 +64,8 @@ export const destinations: Destination[] = [
     reviews: 8710,
     tagline: "Misty hills and emerald tea terraces",
     popular: true,
+    lat: 6.8667,
+    lng: 81.0466,
   },
   {
     id: "kandy",
@@ -69,6 +77,8 @@ export const destinations: Destination[] = [
     reviews: 15030,
     tagline: "Sacred heart of Sri Lankan culture",
     popular: true,
+    lat: 7.2936,
+    lng: 80.6413,
   },
   {
     id: "galle",
@@ -80,6 +90,8 @@ export const destinations: Destination[] = [
     reviews: 11200,
     tagline: "Colonial ramparts and ocean sunsets",
     popular: true,
+    lat: 6.0269,
+    lng: 80.217,
   },
   {
     id: "yala",
@@ -91,8 +103,54 @@ export const destinations: Destination[] = [
     reviews: 6740,
     tagline: "Leopards, elephants & wild safari plains",
     popular: true,
+    lat: 6.3724,
+    lng: 81.5185,
   },
 ];
+
+/** Iconic landmarks shown as pins on the live map (no detail cards needed). */
+export interface IconicPlace {
+  id: string;
+  name: string;
+  region: string;
+  category: PlaceCategory;
+  emoji: string;
+  lat: number;
+  lng: number;
+}
+
+export const iconicPlaces: IconicPlace[] = [
+  ...destinations.map((d) => ({
+    id: d.id,
+    name: d.name,
+    region: d.region,
+    category: d.category,
+    emoji:
+      d.category === "Beaches"
+        ? "🏖️"
+        : d.category === "Temples"
+          ? "🛕"
+          : d.category === "Nature"
+            ? "🌿"
+            : "🏛️",
+    lat: d.lat,
+    lng: d.lng,
+  })),
+  { id: "adams-peak", name: "Adam's Peak (Sri Pada)", region: "Sabaragamuwa", category: "Nature", emoji: "⛰️", lat: 6.8096, lng: 80.4994 },
+  { id: "nine-arch", name: "Nine Arch Bridge", region: "Ella", category: "Historical", emoji: "🌉", lat: 6.8767, lng: 81.0606 },
+  { id: "anuradhapura", name: "Anuradhapura Ruins", region: "North Central", category: "Historical", emoji: "🏛️", lat: 8.3114, lng: 80.4037 },
+  { id: "polonnaruwa", name: "Polonnaruwa Ancient City", region: "North Central", category: "Historical", emoji: "🗿", lat: 7.9403, lng: 81.0188 },
+  { id: "dambulla", name: "Dambulla Cave Temple", region: "Central", category: "Temples", emoji: "🛕", lat: 7.8567, lng: 80.6492 },
+  { id: "nuwara-eliya", name: "Nuwara Eliya", region: "Central", category: "Nature", emoji: "🍃", lat: 6.9497, lng: 80.7891 },
+  { id: "arugam-bay", name: "Arugam Bay", region: "Eastern", category: "Beaches", emoji: "🏄", lat: 6.8403, lng: 81.836 },
+  { id: "unawatuna", name: "Unawatuna Beach", region: "Southern", category: "Beaches", emoji: "🏝️", lat: 6.0094, lng: 80.2497 },
+  { id: "colombo", name: "Colombo City", region: "Western", category: "Dining", emoji: "🏙️", lat: 6.9271, lng: 79.8612 },
+  { id: "trincomalee", name: "Trincomalee", region: "Eastern", category: "Beaches", emoji: "⚓", lat: 8.5874, lng: 81.2152 },
+  { id: "jaffna", name: "Jaffna Fort", region: "Northern", category: "Historical", emoji: "🏰", lat: 9.6615, lng: 80.0255 },
+];
+
+/** Centre of Sri Lanka for the initial map view. */
+export const sriLankaCenter = { lat: 7.8731, lng: 80.7718 };
 
 export const placeCategories: { label: PlaceCategory | "All"; icon: string }[] = [
   { label: "All", icon: "Compass" },
