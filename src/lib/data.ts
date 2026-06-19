@@ -389,3 +389,220 @@ export const eventCategories: (EventCategory | "All")[] = [
   "Festival",
   "Poya Day",
 ];
+
+export type HotelCategory =
+  | "Luxury Resort"
+  | "Beach Resort"
+  | "Boutique Hotel"
+  | "Heritage"
+  | "Villa & Rental"
+  | "Eco Lodge";
+
+export interface Hotel {
+  id: string;
+  name: string;
+  category: HotelCategory;
+  location: string;
+  hotline: string;
+  priceFrom: string;
+  rating: number;
+  emoji: string;
+  description: string;
+  rentable?: boolean;
+}
+
+export const hotels: Hotel[] = [
+  {
+    id: "shangri-la-colombo",
+    name: "Shangri-La Colombo",
+    category: "Luxury Resort",
+    location: "Galle Face, Colombo",
+    hotline: "+94 11 788 8288",
+    priceFrom: "$220 / night",
+    rating: 4.8,
+    emoji: "🏙️",
+    description:
+      "Five-star oceanfront tower on Galle Face with infinity pool, spa and multiple fine-dining restaurants.",
+  },
+  {
+    id: "cinnamon-grand",
+    name: "Cinnamon Grand Colombo",
+    category: "Luxury Resort",
+    location: "Colombo 03",
+    hotline: "+94 11 243 7437",
+    priceFrom: "$150 / night",
+    rating: 4.6,
+    emoji: "🌆",
+    description:
+      "Iconic city hotel with 14 restaurants, large pool and easy access to shopping and business districts.",
+  },
+  {
+    id: "galle-face-hotel",
+    name: "Galle Face Hotel",
+    category: "Heritage",
+    location: "Galle Face, Colombo",
+    hotline: "+94 11 254 1010",
+    priceFrom: "$170 / night",
+    rating: 4.5,
+    emoji: "🏛️",
+    description:
+      "Historic colonial-era seafront hotel since 1864, famous for its checkerboard terrace and sunsets.",
+  },
+  {
+    id: "heritance-kandalama",
+    name: "Heritance Kandalama",
+    category: "Eco Lodge",
+    location: "Dambulla",
+    hotline: "+94 66 555 5000",
+    priceFrom: "$140 / night",
+    rating: 4.7,
+    emoji: "🌿",
+    description:
+      "Geoffrey Bawa-designed eco hotel built into a cliff overlooking Kandalama lake near Sigiriya.",
+  },
+  {
+    id: "jetwing-lighthouse",
+    name: "Jetwing Lighthouse",
+    category: "Beach Resort",
+    location: "Galle",
+    hotline: "+94 91 222 3744",
+    priceFrom: "$160 / night",
+    rating: 4.6,
+    emoji: "🏖️",
+    description:
+      "Cliffside beach resort near Galle Fort with two pools, spa and dramatic ocean views.",
+  },
+  {
+    id: "anantara-peace-haven",
+    name: "Anantara Peace Haven Tangalle",
+    category: "Luxury Resort",
+    location: "Tangalle",
+    hotline: "+94 47 720 6060",
+    priceFrom: "$300 / night",
+    rating: 4.8,
+    emoji: "🌴",
+    description:
+      "Secluded south-coast luxury resort set in a coconut plantation with a private beach and pool villas.",
+  },
+  {
+    id: "amangalla",
+    name: "Amangalla",
+    category: "Boutique Hotel",
+    location: "Galle Fort",
+    hotline: "+94 91 223 3388",
+    priceFrom: "$450 / night",
+    rating: 4.9,
+    emoji: "🕌",
+    description:
+      "Ultra-luxury boutique hotel inside the UNESCO Galle Fort, restored from a 17th-century building.",
+  },
+  {
+    id: "98-acres-resort",
+    name: "98 Acres Resort & Spa",
+    category: "Eco Lodge",
+    location: "Ella",
+    hotline: "+94 57 205 0050",
+    priceFrom: "$180 / night",
+    rating: 4.7,
+    emoji: "⛰️",
+    description:
+      "Tea-estate resort in Ella with chalets overlooking Little Adam's Peak and Ella Gap.",
+  },
+  {
+    id: "wild-coast-tented",
+    name: "Wild Coast Tented Lodge",
+    category: "Eco Lodge",
+    location: "Yala",
+    hotline: "+94 47 723 9450",
+    priceFrom: "$400 / night",
+    rating: 4.8,
+    emoji: "🐆",
+    description:
+      "Luxury tented camp on the edge of Yala National Park, perfect for leopard safaris.",
+  },
+  {
+    id: "heritance-ahungalla",
+    name: "Heritance Ahungalla",
+    category: "Beach Resort",
+    location: "Ahungalla",
+    hotline: "+94 91 555 5000",
+    priceFrom: "$130 / night",
+    rating: 4.5,
+    emoji: "🌊",
+    description:
+      "West-coast beach resort with one of the longest hotel pools in the country and golden sands.",
+  },
+  {
+    id: "ceylon-tea-trails",
+    name: "Ceylon Tea Trails",
+    category: "Boutique Hotel",
+    location: "Hatton",
+    hotline: "+94 11 774 5730",
+    priceFrom: "$500 / night",
+    rating: 4.9,
+    emoji: "🍃",
+    description:
+      "Restored colonial tea-planter bungalows by Castlereagh Lake in the central highlands, all-inclusive.",
+  },
+  {
+    id: "uga-bay",
+    name: "Uga Bay",
+    category: "Beach Resort",
+    location: "Pasikuda",
+    hotline: "+94 65 738 0380",
+    priceFrom: "$150 / night",
+    rating: 4.6,
+    emoji: "🐚",
+    description:
+      "East-coast resort on the calm shallow bay of Pasikuda, ideal for families and swimming.",
+  },
+  {
+    id: "villa-bentota",
+    name: "Villa Bentota Rentals",
+    category: "Villa & Rental",
+    location: "Bentota",
+    hotline: "+94 34 227 5311",
+    priceFrom: "$120 / night",
+    rating: 4.4,
+    emoji: "🏡",
+    description:
+      "Private riverside and beach villas with staff, perfect for groups wanting their own space.",
+    rentable: true,
+  },
+  {
+    id: "galle-fort-villas",
+    name: "Galle Fort Heritage Villas",
+    category: "Villa & Rental",
+    location: "Galle Fort",
+    hotline: "+94 91 224 2870",
+    priceFrom: "$200 / night",
+    rating: 4.7,
+    emoji: "🔑",
+    description:
+      "Whole-house rentals inside historic Galle Fort — courtyard homes with private chefs available.",
+    rentable: true,
+  },
+  {
+    id: "ella-eco-cabins",
+    name: "Ella Eco Cabins & Rentals",
+    category: "Villa & Rental",
+    location: "Ella",
+    hotline: "+94 76 555 1234",
+    priceFrom: "$60 / night",
+    rating: 4.3,
+    emoji: "🛖",
+    description:
+      "Affordable mountain cabins and homestays to rent with valley views and home-cooked meals.",
+    rentable: true,
+  },
+];
+
+export const hotelCategories: (HotelCategory | "All")[] = [
+  "All",
+  "Luxury Resort",
+  "Beach Resort",
+  "Boutique Hotel",
+  "Heritage",
+  "Villa & Rental",
+  "Eco Lodge",
+];

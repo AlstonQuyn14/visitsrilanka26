@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Compass, Sparkles, ShieldAlert, User } from "lucide-react";
+import { Home, Compass, BedDouble, ShieldAlert, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -18,16 +18,16 @@ export function BottomNav() {
             <NavItem key={item.label} {...item} />
           ))}
 
-          {/* Center AI assistant action */}
+          {/* Center Hotels action */}
           <Link
-            to="/planner"
+            to="/hotels"
             className="-mt-7 flex flex-col items-center gap-1"
-            aria-label="AI Travel Assistant"
+            aria-label="Hotels & Rentals"
           >
             <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-lg shadow-accent/30 transition-transform active:scale-95">
-              <Sparkles className="h-6 w-6" />
+              <BedDouble className="h-6 w-6" />
             </span>
-            <span className="text-[10px] font-semibold text-foreground">AI</span>
+            <span className="text-[10px] font-semibold text-foreground">Hotels</span>
           </Link>
 
           {items.slice(2).map((item) => (
