@@ -23,6 +23,7 @@ import {
   Search,
   Bell,
   ChevronRight,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
@@ -51,6 +52,7 @@ const icons: Record<string, LucideIcon> = {
   Search,
   Bell,
   ChevronRight,
+  CalendarDays,
 };
 
 export function Icon({
