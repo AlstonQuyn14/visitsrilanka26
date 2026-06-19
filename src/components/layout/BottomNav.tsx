@@ -20,7 +20,7 @@ export function BottomNav() {
 
           {/* Center AI assistant action */}
           <Link
-            to="/explore"
+            to="/planner"
             className="-mt-7 flex flex-col items-center gap-1"
             aria-label="AI Travel Assistant"
           >
