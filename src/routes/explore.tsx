@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, MapPin, SlidersHorizontal } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { DestinationCard } from "@/components/DestinationCard";
@@ -70,7 +70,10 @@ function Explore() {
 
       {/* Map preview */}
       <section className="mt-5 px-5">
-        <div className="relative h-32 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary/15 via-chart-3/10 to-accent/15">
+        <Link
+          to="/map"
+          className="relative block h-32 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary/15 via-chart-3/10 to-accent/15"
+        >
           <div
             className="absolute inset-0 opacity-40"
             style={{
@@ -83,17 +86,17 @@ function Explore() {
             <div>
               <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
                 <MapPin className="h-4 w-4 text-accent" />
-                Map view
+                Live 3D map
               </p>
               <p className="mt-1 max-w-[10rem] text-xs text-muted-foreground">
-                See nearby hotspots, hotels & dining around you.
+                Explore iconic places & build a route across Sri Lanka.
               </p>
             </div>
-            <button className="rounded-full bg-card px-4 py-2 text-xs font-semibold text-primary shadow-sm">
+            <span className="rounded-full bg-card px-4 py-2 text-xs font-semibold text-primary shadow-sm">
               Open map
-            </button>
+            </span>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* Categories */}

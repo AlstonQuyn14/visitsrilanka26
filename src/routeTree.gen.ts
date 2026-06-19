@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as GroupTripRouteImport } from './routes/group-trip'
 import { Route as GroceryRouteImport } from './routes/grocery'
@@ -29,6 +30,11 @@ const TransportRoute = TransportRouteImport.update({
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesRoute = GuidesRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/map'
     | '/safety'
     | '/transport'
     | '/profile'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/map'
     | '/safety'
     | '/transport'
     | '/profile'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/map'
     | '/safety'
     | '/transport'
     | '/_authenticated/profile'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   GroceryRoute: typeof GroceryRoute
   GroupTripRoute: typeof GroupTripRoute
   GuidesRoute: typeof GuidesRouteWithChildren
+  MapRoute: typeof MapRoute
   SafetyRoute: typeof SafetyRoute
   TransportRoute: typeof TransportRoute
 }
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/safety'
       fullPath: '/safety'
       preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides': {
@@ -278,6 +298,7 @@ const rootRouteChildren: RootRouteChildren = {
   GroceryRoute: GroceryRoute,
   GroupTripRoute: GroupTripRoute,
   GuidesRoute: GuidesRouteWithChildren,
+  MapRoute: MapRoute,
   SafetyRoute: SafetyRoute,
   TransportRoute: TransportRoute,
 }
