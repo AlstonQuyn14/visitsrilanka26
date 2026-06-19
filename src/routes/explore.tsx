@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search, MapPin, SlidersHorizontal } from "lucide-react";
+import { Search, MapPin, SlidersHorizontal, Languages } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { DestinationCard } from "@/components/DestinationCard";
 import { Icon } from "@/components/Icon";
