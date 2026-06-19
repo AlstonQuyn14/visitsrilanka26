@@ -242,20 +242,13 @@ function Translate() {
 function LangPicker({
   value,
   onChange,
-  align,
 }: {
   value: string;
   onChange: (code: string) => void;
-  align: "start" | "end";
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger
-        className={cn(
-          "h-10 flex-1 rounded-xl border-0 bg-background/70 font-semibold",
-          align === "end" && "justify-end",
-        )}
-      >
+      <SelectTrigger className="h-10 w-full rounded-xl border-0 bg-background/70 font-semibold">
         <SelectValue />
       </SelectTrigger>
       <SelectContent className="max-h-72">
