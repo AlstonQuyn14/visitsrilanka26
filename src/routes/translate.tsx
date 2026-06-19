@@ -355,21 +355,36 @@ function Translate() {
               {targetLang.native}
             </span>
             {output && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="flex items-center gap-1 text-xs font-medium text-primary"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" /> Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5" /> Copy
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={speak}
+                  disabled={speaking}
+                  className="flex items-center gap-1 text-xs font-medium text-primary disabled:opacity-60"
+                >
+                  {speaking ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Volume2 className="h-3.5 w-3.5" />
+                  )}
+                  {speaking ? "Playing" : "Listen"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="flex items-center gap-1 text-xs font-medium text-primary"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5" /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" /> Copy
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
           {output ? (
