@@ -260,27 +260,63 @@ function Translate() {
               <span>{sourceLang.flag}</span>
               {sourceLang.native}
             </span>
-            {input && (
+            <div className="flex items-center gap-3">
+              {input && !recording && (
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Clear
+                </button>
+              )}
               <button
                 type="button"
-                onClick={clearAll}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                onClick={recording ? stopRecording : startRecording}
+                disabled={transcribing}
+                aria-label={recording ? "Stop recording" : "Record voice"}
+                className={cn(
+                  "grid h-9 w-9 place-items-center rounded-full transition-colors disabled:opacity-50",
+                  recording
+                    ? "animate-pulse bg-destructive text-destructive-foreground"
+                    : "bg-primary/10 text-primary hover:bg-primary/20",
+                )}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-                Clear
+                {transcribing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : recording ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
               </button>
-            )}
+            </div>
           </div>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Type in ${sourceLang.name}…`}
+            placeholder={
+              recording
+                ? "Listening… tap stop when you're done"
+                : transcribing
+                  ? "Transcribing your voice…"
+                  : `Type or speak in ${sourceLang.name}…`
+            }
             rows={4}
             maxLength={5000}
             className="w-full resize-none bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60"
           />
-          <div className="mt-1 text-right text-[11px] text-muted-foreground/70">
-            {input.length}/5000
+          <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground/70">
+            <span className="flex items-center gap-1 text-primary">
+              {recording && (
+                <>
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-destructive" />
+                  Recording…
+                </>
+              )}
+            </span>
+            <span>{input.length}/5000</span>
           </div>
         </div>
 
