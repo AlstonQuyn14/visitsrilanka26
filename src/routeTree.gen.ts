@@ -21,6 +21,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
+import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 
 const TransportRoute = TransportRouteImport.update({
@@ -82,6 +83,11 @@ const GuidesRegisterRoute = GuidesRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => GuidesRoute,
 } as any)
+const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
+  id: '/api/transcribe',
+  path: '/api/transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRoutesByTo {
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRoutesById {
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
 }
 export interface FileRouteTypes {
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/transcribe'
     | '/guides/register'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/transcribe'
     | '/guides/register'
   id:
     | '__root__'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/_authenticated/profile'
+    | '/api/transcribe'
     | '/guides/register'
   fileRoutesById: FileRoutesById
 }
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   TranslateRoute: typeof TranslateRoute
   TransportRoute: typeof TransportRoute
+  ApiTranscribeRoute: typeof ApiTranscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesRegisterRouteImport
       parentRoute: typeof GuidesRoute
     }
+    '/api/transcribe': {
+      id: '/api/transcribe'
+      path: '/api/transcribe'
+      fullPath: '/api/transcribe'
+      preLoaderRoute: typeof ApiTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -322,17 +342,8 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   TranslateRoute: TranslateRoute,
   TransportRoute: TransportRoute,
+  ApiTranscribeRoute: ApiTranscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
