@@ -175,7 +175,7 @@ export const quickActions: QuickAction[] = [
   { id: "transport", label: "Book Ride", icon: "Car", to: "/transport", tone: "primary" },
   { id: "guides", label: "Find a Guide", icon: "UserRound", to: "/guides", tone: "nature" },
   { id: "ai", label: "AI Planner", icon: "Sparkles", to: "/explore", tone: "sun" },
-  { id: "translate", label: "Translate", icon: "Languages", to: "/translate", tone: "primary" },
+  { id: "events", label: "Main Events", icon: "CalendarDays", to: "/events", tone: "primary" },
   { id: "grocery", label: "Essentials", icon: "ShoppingBag", to: "/grocery", tone: "nature" },
   { id: "group", label: "Group Trip", icon: "Users", to: "/group-trip", tone: "sun" },
   { id: "explore", label: "Explore", icon: "MapPinned", to: "/explore", tone: "accent" },
@@ -198,3 +198,194 @@ export const currentWeather: WeatherInfo = {
   low: 26,
   icon: "Sun",
 };
+
+export type EventCategory =
+  | "Religious"
+  | "Cultural"
+  | "National"
+  | "Festival"
+  | "Poya Day";
+
+export interface SriLankaEvent {
+  id: string;
+  name: string;
+  month: string;
+  date: string;
+  category: EventCategory;
+  emoji: string;
+  description: string;
+  publicHoliday: boolean;
+}
+
+/** Common annual events, festivals & holidays across Sri Lanka. */
+export const sriLankaEvents: SriLankaEvent[] = [
+  {
+    id: "duruthu-poya",
+    name: "Duruthu Poya",
+    month: "January",
+    date: "Full moon, January",
+    category: "Poya Day",
+    emoji: "🌕",
+    description: "Marks the Buddha's first visit to Sri Lanka, celebrated with the grand Kelaniya perahera.",
+    publicHoliday: true,
+  },
+  {
+    id: "thai-pongal",
+    name: "Thai Pongal",
+    month: "January",
+    date: "14 January",
+    category: "Cultural",
+    emoji: "🌾",
+    description: "Tamil Hindu harvest thanksgiving festival honouring the Sun God with sweet pongal rice.",
+    publicHoliday: true,
+  },
+  {
+    id: "independence-day",
+    name: "National Independence Day",
+    month: "February",
+    date: "4 February",
+    category: "National",
+    emoji: "🇱🇰",
+    description: "Sri Lanka's freedom from British rule, marked with parades, flag ceremonies and cultural shows.",
+    publicHoliday: true,
+  },
+  {
+    id: "navam-poya",
+    name: "Navam Poya",
+    month: "February",
+    date: "Full moon, February",
+    category: "Poya Day",
+    emoji: "🌕",
+    description: "Famous Gangaramaya Navam Perahera in Colombo with elephants, dancers and drummers.",
+    publicHoliday: true,
+  },
+  {
+    id: "maha-sivarathri",
+    name: "Maha Sivarathri",
+    month: "February / March",
+    date: "Feb–Mar",
+    category: "Religious",
+    emoji: "🕉️",
+    description: "Hindu night of devotion to Lord Shiva, observed with fasting and all-night prayers.",
+    publicHoliday: true,
+  },
+  {
+    id: "milad-un-nabi",
+    name: "Milad un-Nabi (Prophet's Birthday)",
+    month: "Varies",
+    date: "Islamic calendar",
+    category: "Religious",
+    emoji: "🕌",
+    description: "Muslim celebration of the birth of the Prophet Muhammad with prayers and charity.",
+    publicHoliday: true,
+  },
+  {
+    id: "good-friday",
+    name: "Good Friday",
+    month: "March / April",
+    date: "Mar–Apr",
+    category: "Religious",
+    emoji: "✝️",
+    description: "Christian observance of the crucifixion of Jesus Christ with church services.",
+    publicHoliday: true,
+  },
+  {
+    id: "sinhala-tamil-new-year",
+    name: "Sinhala & Tamil New Year (Aluth Avurudda)",
+    month: "April",
+    date: "13–14 April",
+    category: "Cultural",
+    emoji: "🪔",
+    description: "Sri Lanka's biggest cultural festival with traditional games, sweets and family rituals.",
+    publicHoliday: true,
+  },
+  {
+    id: "vesak-poya",
+    name: "Vesak Poya",
+    month: "May",
+    date: "Full moon, May",
+    category: "Religious",
+    emoji: "🏮",
+    description: "Holiest Buddhist festival marking the birth, enlightenment and passing of the Buddha. Streets glow with lanterns and dansala stalls.",
+    publicHoliday: true,
+  },
+  {
+    id: "poson-poya",
+    name: "Poson Poya",
+    month: "June",
+    date: "Full moon, June",
+    category: "Religious",
+    emoji: "🌕",
+    description: "Celebrates the arrival of Buddhism in Sri Lanka, centred on the sacred city of Mihintale.",
+    publicHoliday: true,
+  },
+  {
+    id: "esala-perahera",
+    name: "Esala Perahera (Kandy)",
+    month: "July / August",
+    date: "Jul–Aug",
+    category: "Festival",
+    emoji: "🐘",
+    description: "Spectacular 10-night procession in Kandy honouring the Sacred Tooth Relic with decorated elephants and dancers.",
+    publicHoliday: true,
+  },
+  {
+    id: "hajj-festival",
+    name: "Hajj Festival (Eid al-Adha)",
+    month: "Varies",
+    date: "Islamic calendar",
+    category: "Religious",
+    emoji: "🕋",
+    description: "Muslim Festival of Sacrifice marking the end of the Hajj pilgrimage with prayers and feasts.",
+    publicHoliday: true,
+  },
+  {
+    id: "ramadan-eid",
+    name: "Eid al-Fitr (Ramazan Festival)",
+    month: "Varies",
+    date: "Islamic calendar",
+    category: "Religious",
+    emoji: "🌙",
+    description: "Joyful festival ending the holy month of Ramadan fasting, celebrated with family feasts.",
+    publicHoliday: true,
+  },
+  {
+    id: "deepavali",
+    name: "Deepavali (Diwali)",
+    month: "October / November",
+    date: "Oct–Nov",
+    category: "Religious",
+    emoji: "🪔",
+    description: "Hindu festival of lights celebrating the triumph of light over darkness with oil lamps and sweets.",
+    publicHoliday: true,
+  },
+  {
+    id: "christmas",
+    name: "Christmas Day",
+    month: "December",
+    date: "25 December",
+    category: "Religious",
+    emoji: "🎄",
+    description: "Christian celebration of the birth of Jesus, marked with carols, lights and festive markets island-wide.",
+    publicHoliday: true,
+  },
+  {
+    id: "unduvap-poya",
+    name: "Unduvap Poya",
+    month: "December",
+    date: "Full moon, December",
+    category: "Poya Day",
+    emoji: "🌕",
+    description: "Commemorates the arrival of the sacred Bo sapling at Anuradhapura.",
+    publicHoliday: true,
+  },
+];
+
+export const eventCategories: (EventCategory | "All")[] = [
+  "All",
+  "Religious",
+  "Cultural",
+  "National",
+  "Festival",
+  "Poya Day",
+];
