@@ -126,7 +126,9 @@ function Translate() {
       <div className="mt-5 space-y-4 px-5 pb-8">
         {/* Language switcher */}
         <div className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card/60 p-2">
-          <LangPicker value={source} onChange={setSource} align="start" />
+          <div className="min-w-0 flex-1">
+            <LangPicker value={source} onChange={setSource} />
+          </div>
           <button
             type="button"
             onClick={swap}
@@ -135,7 +137,9 @@ function Translate() {
           >
             <ArrowRightLeft className="h-4 w-4" />
           </button>
-          <LangPicker value={target} onChange={setTarget} align="end" />
+          <div className="min-w-0 flex-1">
+            <LangPicker value={target} onChange={setTarget} />
+          </div>
         </div>
 
         {/* Source input */}
