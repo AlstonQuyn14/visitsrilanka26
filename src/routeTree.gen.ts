@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
+import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as GuidesRouteImport } from './routes/guides'
@@ -25,6 +26,11 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 const TransportRoute = TransportRouteImport.update({
   id: '/transport',
   path: '/transport',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TranslateRoute = TranslateRouteImport.update({
+  id: '/translate',
+  path: '/translate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafetyRoute = SafetyRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/guides': typeof GuidesRouteWithChildren
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
+  '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/guides': typeof GuidesRouteWithChildren
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
+  '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/guides': typeof GuidesRouteWithChildren
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
+  '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/map'
     | '/safety'
+    | '/translate'
     | '/transport'
     | '/profile'
     | '/guides/register'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/map'
     | '/safety'
+    | '/translate'
     | '/transport'
     | '/profile'
     | '/guides/register'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/map'
     | '/safety'
+    | '/translate'
     | '/transport'
     | '/_authenticated/profile'
     | '/guides/register'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   GuidesRoute: typeof GuidesRouteWithChildren
   MapRoute: typeof MapRoute
   SafetyRoute: typeof SafetyRoute
+  TranslateRoute: typeof TranslateRoute
   TransportRoute: typeof TransportRoute
 }
 
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       path: '/transport'
       fullPath: '/transport'
       preLoaderRoute: typeof TransportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/translate': {
+      id: '/translate'
+      path: '/translate'
+      fullPath: '/translate'
+      preLoaderRoute: typeof TranslateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safety': {
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesRoute: GuidesRouteWithChildren,
   MapRoute: MapRoute,
   SafetyRoute: SafetyRoute,
+  TranslateRoute: TranslateRoute,
   TransportRoute: TransportRoute,
 }
 export const routeTree = rootRouteImport
