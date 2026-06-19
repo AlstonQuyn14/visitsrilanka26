@@ -68,8 +68,8 @@ function Explore() {
         </div>
       </header>
 
-      {/* Map preview */}
-      <section className="mt-5 px-5">
+      {/* Map preview + Translator */}
+      <section className="mt-5 grid grid-cols-2 gap-3 px-5">
         <Link
           to="/map"
           className="relative block h-32 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary/15 via-chart-3/10 to-accent/15"
@@ -82,22 +82,33 @@ function Explore() {
               backgroundSize: "100% 100%",
             }}
           />
-          <div className="absolute inset-0 flex items-center justify-between p-4">
-            <div>
-              <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-                <MapPin className="h-4 w-4 text-accent" />
-                Live 3D map
-              </p>
-              <p className="mt-1 max-w-[10rem] text-xs text-muted-foreground">
-                Explore iconic places & build a route across Sri Lanka.
-              </p>
-            </div>
-            <span className="rounded-full bg-card px-4 py-2 text-xs font-semibold text-primary shadow-sm">
+          <div className="absolute inset-0 flex flex-col justify-between p-4">
+            <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+              <MapPin className="h-4 w-4 text-accent" />
+              Live 3D map
+            </p>
+            <span className="w-fit rounded-full bg-card px-3 py-1.5 text-xs font-semibold text-primary shadow-sm">
               Open map
             </span>
           </div>
         </Link>
+
+        <Link
+          to="/translate"
+          className="relative block h-32 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-accent/15 via-chart-4/10 to-primary/15"
+        >
+          <div className="absolute inset-0 flex flex-col justify-between p-4">
+            <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+              <Languages className="h-4 w-4 text-primary" />
+              Translator
+            </p>
+            <span className="w-fit rounded-full bg-card px-3 py-1.5 text-xs font-semibold text-accent shadow-sm">
+              Open translator
+            </span>
+          </div>
+        </Link>
       </section>
+
 
       {/* Categories */}
       <section className="mt-5">
