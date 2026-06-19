@@ -175,7 +175,7 @@ export const quickActions: QuickAction[] = [
   { id: "transport", label: "Book Ride", icon: "Car", to: "/transport", tone: "primary" },
   { id: "guides", label: "Find a Guide", icon: "UserRound", to: "/guides", tone: "nature" },
   { id: "ai", label: "AI Planner", icon: "Sparkles", to: "/explore", tone: "sun" },
-  { id: "translate", label: "Translate", icon: "Languages", to: "/translate", tone: "primary" },
+  { id: "events", label: "Main Events", icon: "CalendarDays", to: "/events", tone: "primary" },
   { id: "grocery", label: "Essentials", icon: "ShoppingBag", to: "/grocery", tone: "nature" },
   { id: "group", label: "Group Trip", icon: "Users", to: "/group-trip", tone: "sun" },
   { id: "explore", label: "Explore", icon: "MapPinned", to: "/explore", tone: "accent" },
