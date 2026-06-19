@@ -13,6 +13,7 @@ import { Route as TransportRouteImport } from './routes/transport'
 import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as HotelsRouteImport } from './routes/hotels'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as GroupTripRouteImport } from './routes/group-trip'
 import { Route as GroceryRouteImport } from './routes/grocery'
@@ -47,6 +48,11 @@ const SafetyRoute = SafetyRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HotelsRoute = HotelsRouteImport.update({
+  id: '/hotels',
+  path: '/hotels',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesRoute = GuidesRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/grocery': typeof GroceryRoute
   '/group-trip': typeof GroupTripRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/hotels'
     | '/map'
     | '/safety'
     | '/translate'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/hotels'
     | '/map'
     | '/safety'
     | '/translate'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/grocery'
     | '/group-trip'
     | '/guides'
+    | '/hotels'
     | '/map'
     | '/safety'
     | '/translate'
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   GroceryRoute: typeof GroceryRoute
   GroupTripRoute: typeof GroupTripRoute
   GuidesRoute: typeof GuidesRouteWithChildren
+  HotelsRoute: typeof HotelsRoute
   MapRoute: typeof MapRoute
   SafetyRoute: typeof SafetyRoute
   TranslateRoute: typeof TranslateRoute
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hotels': {
+      id: '/hotels'
+      path: '/hotels'
+      fullPath: '/hotels'
+      preLoaderRoute: typeof HotelsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   GroceryRoute: GroceryRoute,
   GroupTripRoute: GroupTripRoute,
   GuidesRoute: GuidesRouteWithChildren,
+  HotelsRoute: HotelsRoute,
   MapRoute: MapRoute,
   SafetyRoute: SafetyRoute,
   TranslateRoute: TranslateRoute,
