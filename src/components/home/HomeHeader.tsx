@@ -1,6 +1,35 @@
+import { useEffect, useState } from "react";
 import { Bell, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export function HomeHeader() {
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchName() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user || !active) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", user.id)
+        .single();
+      const resolved =
+        data?.display_name ??
+        user.user_metadata?.display_name ??
+        user.email?.split("@")[0] ??
+        null;
+      if (active) setName(resolved);
+    }
+    fetchName();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <header className="px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <div className="flex items-center justify-between">
@@ -10,7 +39,9 @@ export function HomeHeader() {
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Ayubowan 🙏</p>
-            <p className="text-sm font-bold text-foreground">Welcome, traveller</p>
+            <p className="text-sm font-bold text-foreground">
+              Welcome, {name ?? "traveller"}
+            </p>
           </div>
         </div>
         <button
