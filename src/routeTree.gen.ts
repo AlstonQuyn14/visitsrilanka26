@@ -24,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 
 const TransportRoute = TransportRouteImport.update({
@@ -100,6 +101,11 @@ const ApiSpeakRoute = ApiSpeakRouteImport.update({
   path: '/api/speak',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/guides/register': typeof GuidesRegisterRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/transport'
     | '/_authenticated/profile'
+    | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
     | '/guides/register'
@@ -227,6 +239,7 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   TranslateRoute: typeof TranslateRoute
   TransportRoute: typeof TransportRoute
+  ApiChatRoute: typeof ApiChatRoute
   ApiSpeakRoute: typeof ApiSpeakRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
 }
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSpeakRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   TranslateRoute: TranslateRoute,
   TransportRoute: TransportRoute,
+  ApiChatRoute: ApiChatRoute,
   ApiSpeakRoute: ApiSpeakRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
 }
