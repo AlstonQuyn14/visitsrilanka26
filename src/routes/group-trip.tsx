@@ -296,6 +296,28 @@ function GroupTrip() {
                   </li>
                 ))}
               </ul>
+
+              <button
+                onClick={shareWithGroup}
+                className={cn(
+                  "mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+                  shared
+                    ? "bg-chart-3/15 text-chart-3"
+                    : "bg-primary text-primary-foreground",
+                )}
+              >
+                {shared ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Shared with group
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    Share split with group
+                  </>
+                )}
+              </button>
             </>
           ) : (
             <div className="mt-3 flex flex-col items-center gap-2 rounded-xl bg-secondary/50 px-4 py-6 text-center">
