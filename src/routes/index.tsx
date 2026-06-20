@@ -34,6 +34,17 @@ function Home() {
   const popular = destinations.filter((d) => d.popular);
   const recommended = destinations.slice(2, 6);
 
+  const activityTabs = useMemo(
+    () => ["All", ...Array.from(new Set(activities.map((a) => a.category)))],
+    [],
+  );
+  const [activeTab, setActiveTab] = useState("All");
+  const filteredActivities =
+    activeTab === "All"
+      ? activities
+      : activities.filter((a) => a.category === activeTab);
+
+
   return (
     <AppShell>
       <h1 className="sr-only">Serendib — Explore Sri Lanka</h1>
