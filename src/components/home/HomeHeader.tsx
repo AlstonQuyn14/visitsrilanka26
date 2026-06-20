@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bell, Search } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export function HomeHeader() {
@@ -44,13 +45,14 @@ export function HomeHeader() {
             </p>
           </div>
         </div>
-        <button
+        <Link
+          to="/notifications"
           aria-label="Notifications"
           className="relative grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-card text-foreground"
         >
           <Bell className="h-5 w-5" />
           <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent" />
-        </button>
+        </Link>
       </div>
 
       <div className="mt-5 flex items-center gap-2 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-sm">

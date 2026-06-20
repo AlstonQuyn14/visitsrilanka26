@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransportRouteImport } from './routes/transport'
 import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as HotelsRouteImport } from './routes/hotels'
 import { Route as GuidesRouteImport } from './routes/guides'
@@ -43,6 +44,11 @@ const TranslateRoute = TranslateRouteImport.update({
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/guides': typeof GuidesRouteWithChildren
   '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/guides': typeof GuidesRouteWithChildren
   '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/guides': typeof GuidesRouteWithChildren
   '/hotels': typeof HotelsRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/safety': typeof SafetyRoute
   '/translate': typeof TranslateRoute
   '/transport': typeof TransportRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/hotels'
     | '/map'
+    | '/notifications'
     | '/safety'
     | '/translate'
     | '/transport'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/hotels'
     | '/map'
+    | '/notifications'
     | '/safety'
     | '/translate'
     | '/transport'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/hotels'
     | '/map'
+    | '/notifications'
     | '/safety'
     | '/translate'
     | '/transport'
@@ -275,6 +287,7 @@ export interface RootRouteChildren {
   GuidesRoute: typeof GuidesRouteWithChildren
   HotelsRoute: typeof HotelsRoute
   MapRoute: typeof MapRoute
+  NotificationsRoute: typeof NotificationsRoute
   SafetyRoute: typeof SafetyRoute
   TranslateRoute: typeof TranslateRoute
   TransportRoute: typeof TransportRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/safety'
       fullPath: '/safety'
       preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesRoute: GuidesRouteWithChildren,
   HotelsRoute: HotelsRoute,
   MapRoute: MapRoute,
+  NotificationsRoute: NotificationsRoute,
   SafetyRoute: SafetyRoute,
   TranslateRoute: TranslateRoute,
   TransportRoute: TransportRoute,
