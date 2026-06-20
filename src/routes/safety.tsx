@@ -313,6 +313,13 @@ function Safety() {
             const etaMin = arrived
               ? 0
               : Math.max(1, Math.round(remaining / effSpeed / 60));
+            if (arrived) {
+              void recordNotification(
+                "tracking",
+                "You've arrived at your destination",
+                `${r.vehicle} · ${r.destination}`,
+              );
+            }
             return {
               ...r,
               remainingMeters: remaining,
