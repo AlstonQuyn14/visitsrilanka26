@@ -587,14 +587,52 @@ function Safety() {
             </div>
           )}
 
+          {geoError && (
+            <div className="mb-3 flex items-start gap-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3 text-xs text-destructive">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{geoError}</span>
+            </div>
+          )}
+
           {rides.length > 0 ? (
             <div className="space-y-3">
               {rides.map((ride) => {
-                const progress = Math.min(
-                  100,
-                  Math.round(((ride.totalMin - ride.remainingMin) / ride.totalMin) * 100),
-                );
-                const arrived = ride.remainingMin <= 0;
+                const arrived = ride.geoStatus === "arrived";
+                const locating = ride.geoStatus === "locating";
+                const errored = ride.geoStatus === "error";
+                const progress =
+                  ride.totalMeters && ride.remainingMeters != null
+                    ? Math.min(
+                        100,
+                        Math.max(
+                          0,
+                          Math.round(
+                            ((ride.totalMeters - ride.remainingMeters) /
+                              ride.totalMeters) *
+                              100,
+                          ),
+                        ),
+                      )
+                    : 0;
+
+                const badge = errored
+                  ? "GPS error"
+                  : locating
+                    ? "Locating…"
+                    : arrived
+                      ? "Arrived"
+                      : ride.etaMin != null
+                        ? `${ride.etaMin} min`
+                        : "Live";
+
+                const statusText = errored
+                  ? ride.error ?? "Couldn't track this journey"
+                  : locating
+                    ? "Finding your location…"
+                    : arrived
+                      ? "Reached destination"
+                      : "En route — live GPS";
+
                 return (
                   <div
                     key={ride.id}
@@ -612,11 +650,16 @@ function Safety() {
                       </div>
                       <span
                         className={cn(
-                          "rounded-full px-2.5 py-1 text-xs font-bold",
-                          arrived ? "bg-chart-3/15 text-chart-3" : "bg-primary/10 text-primary",
+                          "flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold",
+                          errored
+                            ? "bg-destructive/10 text-destructive"
+                            : arrived
+                              ? "bg-chart-3/15 text-chart-3"
+                              : "bg-primary/10 text-primary",
                         )}
                       >
-                        {arrived ? "Arrived" : `${ride.remainingMin} min`}
+                        {locating && <Loader2 className="h-3 w-3 animate-spin" />}
+                        {badge}
                       </span>
                     </div>
 
@@ -630,28 +673,37 @@ function Safety() {
                         <span className="text-foreground">{ride.destination}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5 text-chart-3" />
+                        <LocateFixed className="h-3.5 w-3.5 text-chart-3" />
                         <span>
                           Status:{" "}
-                          <span className="font-medium text-foreground">
-                            {arrived ? "Reached destination" : "En route — live"}
-                          </span>
+                          <span className="font-medium text-foreground">{statusText}</span>
+                          {ride.remainingMeters != null && !arrived && (
+                            <span className="text-muted-foreground">
+                              {" "}· {formatDistance(ride.remainingMeters)} left
+                            </span>
+                          )}
                         </span>
                       </div>
                     </div>
 
-                    {/* Live progress bar */}
-                    <div className="mt-3">
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                        <div
-                          className="h-full rounded-full bg-primary transition-all duration-1000"
-                          style={{ width: `${arrived ? 100 : Math.max(4, progress)}%` }}
-                        />
+                    {/* Live progress bar (GPS-driven) */}
+                    {!errored && (
+                      <div className="mt-3">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all duration-1000"
+                            style={{ width: `${arrived ? 100 : Math.max(4, progress)}%` }}
+                          />
+                        </div>
+                        <p className="mt-1 text-right text-[10px] text-muted-foreground">
+                          {arrived
+                            ? "Journey complete"
+                            : locating
+                              ? "Waiting for GPS…"
+                              : `${progress}% of the way`}
+                        </p>
                       </div>
-                      <p className="mt-1 text-right text-[10px] text-muted-foreground">
-                        {arrived ? "Journey complete" : `${progress}% of the way`}
-                      </p>
-                    </div>
+                    )}
 
                     <div className="mt-3 grid grid-cols-3 gap-2">
                       <a
@@ -688,6 +740,7 @@ function Safety() {
             </div>
           )}
         </section>
+
 
 
         {/* ── Emergency Hotlines ── */}
