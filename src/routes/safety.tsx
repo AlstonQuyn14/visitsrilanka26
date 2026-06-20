@@ -386,70 +386,205 @@ function Safety() {
             </span>
           </div>
 
-          {activeRides.length > 0 ? (
-            <div className="space-y-3">
-              {activeRides.map((ride) => (
-                <div
-                  key={ride.id}
-                  className="rounded-2xl border border-border/60 bg-card p-4"
+          {/* Add journey button / form */}
+          {!showRideForm ? (
+            <button
+              onClick={() => setShowRideForm(true)}
+              className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 py-3 text-sm font-semibold text-primary transition-colors active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" />
+              Add a vehicle to track
+            </button>
+          ) : (
+            <div className="mb-3 rounded-2xl border border-border/60 bg-card p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-sm font-semibold text-foreground">Track your journey</p>
+                <button
+                  onClick={() => setShowRideForm(false)}
+                  className="grid h-7 w-7 place-items-center rounded-full bg-secondary text-muted-foreground"
+                  aria-label="Close"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
-                        <Car className="h-5 w-5" />
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <div className="space-y-2.5">
+                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+                  {vehicleOptions.map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => setForm((f) => ({ ...f, vehicle: v }))}
+                      className={cn(
+                        "shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors",
+                        form.vehicle === v
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 bg-background text-foreground",
+                      )}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    value={form.driver}
+                    onChange={(e) => setForm((f) => ({ ...f, driver: e.target.value }))}
+                    placeholder="Driver name"
+                    className="rounded-xl border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+                  />
+                  <input
+                    value={form.plate}
+                    onChange={(e) => setForm((f) => ({ ...f, plate: e.target.value }))}
+                    placeholder="Plate no."
+                    className="rounded-xl border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5">
+                  <Navigation className="h-4 w-4 shrink-0 text-primary" />
+                  <input
+                    value={form.pickup}
+                    onChange={(e) => setForm((f) => ({ ...f, pickup: e.target.value }))}
+                    placeholder="Pickup location"
+                    className="w-full bg-transparent text-sm outline-none"
+                  />
+                </div>
+                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5">
+                  <MapPin className="h-4 w-4 shrink-0 text-accent" />
+                  <input
+                    value={form.destination}
+                    onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))}
+                    placeholder="Destination"
+                    className="w-full bg-transparent text-sm outline-none"
+                  />
+                </div>
+                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5">
+                  <Clock className="h-4 w-4 shrink-0 text-chart-3" />
+                  <input
+                    value={form.duration}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, duration: e.target.value.replace(/[^\d]/g, "") }))
+                    }
+                    inputMode="numeric"
+                    placeholder="Estimated trip time (minutes)"
+                    className="w-full bg-transparent text-sm outline-none"
+                  />
+                </div>
+
+                <button
+                  onClick={addRide}
+                  disabled={!form.pickup.trim() || !form.destination.trim()}
+                  className="mt-1 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
+                >
+                  Start live tracking
+                </button>
+              </div>
+            </div>
+          )}
+
+          {rides.length > 0 ? (
+            <div className="space-y-3">
+              {rides.map((ride) => {
+                const progress = Math.min(
+                  100,
+                  Math.round(((ride.totalMin - ride.remainingMin) / ride.totalMin) * 100),
+                );
+                const arrived = ride.remainingMin <= 0;
+                return (
+                  <div
+                    key={ride.id}
+                    className="rounded-2xl border border-border/60 bg-card p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+                          <Car className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{ride.vehicle}</p>
+                          <p className="text-xs text-muted-foreground">{ride.driver} · {ride.plate}</p>
+                        </div>
+                      </div>
+                      <span
+                        className={cn(
+                          "rounded-full px-2.5 py-1 text-xs font-bold",
+                          arrived ? "bg-chart-3/15 text-chart-3" : "bg-primary/10 text-primary",
+                        )}
+                      >
+                        {arrived ? "Arrived" : `${ride.remainingMin} min`}
                       </span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{ride.vehicle}</p>
-                        <p className="text-xs text-muted-foreground">{ride.driver} · {ride.plate}</p>
+                    </div>
+
+                    <div className="mt-3 space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Navigation className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-foreground">{ride.pickup}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5 text-accent" />
+                        <span className="text-foreground">{ride.destination}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5 text-chart-3" />
+                        <span>
+                          Status:{" "}
+                          <span className="font-medium text-foreground">
+                            {arrived ? "Reached destination" : "En route — live"}
+                          </span>
+                        </span>
                       </div>
                     </div>
-                    <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
-                      {ride.eta}
-                    </span>
-                  </div>
 
-                  <div className="mt-3 space-y-1.5">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Navigation className="h-3.5 w-3.5 text-primary" />
-                      <span className="text-foreground">{ride.pickup}</span>
+                    {/* Live progress bar */}
+                    <div className="mt-3">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all duration-1000"
+                          style={{ width: `${arrived ? 100 : Math.max(4, progress)}%` }}
+                        />
+                      </div>
+                      <p className="mt-1 text-right text-[10px] text-muted-foreground">
+                        {arrived ? "Journey complete" : `${progress}% of the way`}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5 text-accent" />
-                      <span className="text-foreground">{ride.destination}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5 text-chart-3" />
-                      <span>Status: <span className="font-medium text-foreground">En route to pickup</span></span>
-                    </div>
-                  </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <a
-                      href={`tel:119`}
-                      className="flex items-center justify-center gap-1.5 rounded-xl bg-destructive/10 py-2.5 text-xs font-semibold text-destructive"
-                    >
-                      <Phone className="h-3.5 w-3.5" />
-                      Call Emergency
-                    </a>
-                    <a
-                      href={`tel:011-242-1052`}
-                      className="flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2.5 text-xs font-semibold text-primary"
-                    >
-                      <Phone className="h-3.5 w-3.5" />
-                      Tourist Police
-                    </a>
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      <a
+                        href={`tel:119`}
+                        className="flex items-center justify-center gap-1.5 rounded-xl bg-destructive/10 py-2.5 text-xs font-semibold text-destructive"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                        SOS
+                      </a>
+                      <button
+                        onClick={() => shareRide(ride)}
+                        className="flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2.5 text-xs font-semibold text-primary"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                        Share
+                      </button>
+                      <button
+                        onClick={() => removeRide(ride.id)}
+                        className="flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-muted-foreground"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        End
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-2xl border border-border/60 bg-card p-6 text-center">
               <Car className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-2 text-sm font-medium text-foreground">No active rides</p>
-              <p className="text-xs text-muted-foreground">Book a ride to see live tracking here.</p>
+              <p className="mt-2 text-sm font-medium text-foreground">No journeys tracked</p>
+              <p className="text-xs text-muted-foreground">Add a vehicle above to start live tracking.</p>
             </div>
           )}
         </section>
+
 
         {/* ── Emergency Hotlines ── */}
         <section>
