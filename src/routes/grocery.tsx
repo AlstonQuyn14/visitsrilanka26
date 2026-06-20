@@ -147,7 +147,78 @@ const items: Item[] = [
   { id: "shorteats", name: "Short Eats Pack", category: "Fast Food", unit: "6 pcs", price: 480, emoji: "🥟" },
 ];
 
-function Grocery() {
+interface FoodService {
+  id: string;
+  name: string;
+  tagline: string;
+  hotline: string;
+  emoji: string;
+  tone: string;
+}
+
+const foodServices: FoodService[] = [
+  {
+    id: "pickme-food",
+    name: "PickMe Food",
+    tagline: "Sri Lanka's #1 food delivery",
+    hotline: "+94 117 429 429",
+    emoji: "🛵",
+    tone: "bg-chart-4/20 text-chart-5",
+  },
+  {
+    id: "uber-eats",
+    name: "Uber Eats LK",
+    tagline: "Restaurants near you, fast",
+    hotline: "+94 117 455 455",
+    emoji: "🍔",
+    tone: "bg-foreground/10 text-foreground",
+  },
+  {
+    id: "kapruka",
+    name: "Kapruka Food",
+    tagline: "Meals, cakes & groceries",
+    hotline: "+94 117 551 111",
+    emoji: "🎂",
+    tone: "bg-accent/15 text-accent",
+  },
+  {
+    id: "uber-ceylon",
+    name: "Glovo Ceylon",
+    tagline: "Anything delivered in minutes",
+    hotline: "+94 117 200 200",
+    emoji: "🥡",
+    tone: "bg-chart-3/15 text-chart-3",
+  },
+  {
+    id: "domino",
+    name: "Domino's Pizza",
+    tagline: "Hot pizza hotline delivery",
+    hotline: "+94 117 826 826",
+    emoji: "🍕",
+    tone: "bg-primary/15 text-primary",
+  },
+  {
+    id: "kfc",
+    name: "KFC Sri Lanka",
+    tagline: "Finger lickin' delivery",
+    hotline: "+94 115 777 777",
+    emoji: "🍗",
+    tone: "bg-destructive/15 text-destructive",
+  },
+];
+
+type PaymentMethod = "card" | "cod";
+
+const paymentMethods: {
+  id: PaymentMethod;
+  label: string;
+  hint: string;
+  icon: typeof CreditCard;
+}[] = [
+  { id: "card", label: "Card", hint: "Visa, Mastercard, Amex", icon: CreditCard },
+  { id: "cod", label: "Cash on delivery", hint: "Pay the rider in cash", icon: Banknote },
+];
+
   const [store, setStore] = useState<Store | null>(null);
   const [active, setActive] = useState<Category | "All">("All");
   const [query, setQuery] = useState("");
