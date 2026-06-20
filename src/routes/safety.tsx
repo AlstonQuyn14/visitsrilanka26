@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { geocodeAddress } from "@/lib/geo.functions";
+import { recordNotification } from "@/lib/notifications";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/safety")({
