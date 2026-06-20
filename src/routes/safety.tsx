@@ -351,6 +351,11 @@ function Safety() {
     setRides((prev) => [newRide, ...prev]);
     setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "" });
     setShowRideForm(false);
+    void recordNotification(
+      "tracking",
+      "Live vehicle tracking started",
+      `${newRide.vehicle} · ${newRide.pickup} → ${newRide.destination}`,
+    );
 
     try {
       const res = await geocode({ data: { address: newRide.destination } });
