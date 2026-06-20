@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { WeatherCard } from "@/components/home/WeatherCard";
 import { QuickActions } from "@/components/home/QuickActions";
 import { SectionHeader } from "@/components/SectionHeader";
 import { DestinationCard } from "@/components/DestinationCard";
-import { destinations } from "@/lib/data";
+import { destinations, activities } from "@/lib/data";
+import { MapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
