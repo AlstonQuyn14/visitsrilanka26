@@ -402,7 +402,70 @@ function Grocery() {
         )}
       </section>
 
-      {/* Categories */}
+      {/* Food delivery services */}
+      <section className="mt-6">
+        <div className="px-5">
+          <h3 className="text-base font-bold">Order in from food delivery 🛵</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Tap to call the hotline and order hot meals straight to you.
+          </p>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3 px-5">
+          {foodServices.map((f) => (
+            <a
+              key={f.id}
+              href={`tel:${f.hotline.replace(/\s/g, "")}`}
+              className="flex flex-col rounded-3xl border border-border/60 bg-card p-4 shadow-sm transition-transform active:scale-95"
+            >
+              <span className={cn("grid h-11 w-11 place-items-center rounded-2xl text-2xl", f.tone)}>
+                {f.emoji}
+              </span>
+              <p className="mt-3 text-sm font-semibold leading-tight">{f.name}</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">{f.tagline}</p>
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary">
+                <Phone className="h-3 w-3" /> {f.hotline}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Payment method */}
+      <section className="mt-6">
+        <h3 className="px-5 text-base font-bold">Payment method</h3>
+        <div className="mt-3 grid grid-cols-2 gap-3 px-5">
+          {paymentMethods.map((p) => {
+            const Icon = p.icon;
+            const selected = payment === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setPayment(p.id)}
+                className={cn(
+                  "flex items-center gap-3 rounded-3xl border p-4 text-left transition-colors",
+                  selected
+                    ? "border-primary bg-primary/5"
+                    : "border-border/60 bg-card",
+                )}
+              >
+                <span
+                  className={cn(
+                    "grid h-10 w-10 shrink-0 place-items-center rounded-2xl",
+                    selected ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold leading-tight">{p.label}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">{p.hint}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="mt-6">
         <h3 className="px-5 text-base font-bold">Categories</h3>
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
