@@ -100,7 +100,7 @@ function AuthPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-primary text-primary-foreground">
               <MapPin className="h-5 w-5" />
             </span>
-            Serendib
+            Visit Sri Lanka
           </span>
           <LanguageSelect value={language} onChange={handleLanguage} />
         </div>
