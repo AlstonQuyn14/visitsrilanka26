@@ -219,6 +219,7 @@ const paymentMethods: {
   { id: "cod", label: "Cash on delivery", hint: "Pay the rider in cash", icon: Banknote },
 ];
 
+function Grocery() {
   const [store, setStore] = useState<Store | null>(null);
   const [active, setActive] = useState<Category | "All">("All");
   const [query, setQuery] = useState("");
