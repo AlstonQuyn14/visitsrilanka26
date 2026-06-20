@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bell, Search } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export function HomeHeader() {
