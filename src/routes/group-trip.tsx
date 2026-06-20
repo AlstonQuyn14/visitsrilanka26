@@ -81,6 +81,17 @@ function GroupTrip() {
       prev.length > 1 ? prev.filter((m) => m.id !== id) : prev,
     );
 
+  const [shared, setShared] = useState(false);
+  const shareWithGroup = () => {
+    void recordNotification(
+      "group",
+      "Trip budget shared with your group",
+      `${formatLKR(perPerson)} each · ${shareCount} travellers · ${formatLKR(budgetValue)} total`,
+    );
+    setShared(true);
+    setTimeout(() => setShared(false), 3000);
+  };
+
   return (
     <AppShell>
       {/* Header */}
