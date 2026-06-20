@@ -9,9 +9,10 @@ import {
   Check,
   Star,
   Clock,
-  MapPin,
   Truck,
-  ChevronLeft,
+  Phone,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
