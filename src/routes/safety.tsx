@@ -221,6 +221,64 @@ function Safety() {
   const [showSosSent, setShowSosSent] = useState(false);
   const [expandedDisaster, setExpandedDisaster] = useState<string | null>(null);
 
+  /* ── Live vehicle tracking ── */
+  const [rides, setRides] = useState<TrackedRide[]>(initialRides);
+  const [showRideForm, setShowRideForm] = useState(false);
+  const [form, setForm] = useState({
+    vehicle: vehicleOptions[0],
+    driver: "",
+    plate: "",
+    pickup: "",
+    destination: "",
+    duration: "",
+  });
+
+  // Simulate "live" movement: tick down remaining ETA every 5 seconds.
+  useEffect(() => {
+    if (rides.length === 0) return;
+    const interval = setInterval(() => {
+      setRides((prev) =>
+        prev.map((r) =>
+          r.remainingMin > 0 ? { ...r, remainingMin: Math.max(0, r.remainingMin - 1) } : r,
+        ),
+      );
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [rides.length]);
+
+  function addRide() {
+    if (!form.pickup.trim() || !form.destination.trim()) return;
+    const total = Math.max(1, parseInt(form.duration, 10) || 30);
+    const newRide: TrackedRide = {
+      id: `r${Date.now()}`,
+      vehicle: form.vehicle,
+      driver: form.driver.trim() || "My driver",
+      plate: form.plate.trim() || "—",
+      pickup: form.pickup.trim(),
+      destination: form.destination.trim(),
+      totalMin: total,
+      remainingMin: total,
+    };
+    setRides((prev) => [newRide, ...prev]);
+    setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "", duration: "" });
+    setShowRideForm(false);
+  }
+
+  function removeRide(id: string) {
+    setRides((prev) => prev.filter((r) => r.id !== id));
+  }
+
+  function shareRide(ride: TrackedRide) {
+    const text = `Tracking my ${ride.vehicle} from ${ride.pickup} to ${ride.destination}. ETA ~${ride.remainingMin} min. Plate: ${ride.plate}.`;
+    if (navigator.share) {
+      navigator.share({ title: "My live journey", text }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(text).catch(() => {});
+    }
+  }
+
+
+
   function startSos() {
     setSosActive(true);
     let count = 5;
