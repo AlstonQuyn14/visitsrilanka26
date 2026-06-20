@@ -9,9 +9,10 @@ import {
   Check,
   Star,
   Clock,
-  MapPin,
   Truck,
-  ChevronLeft,
+  Phone,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
@@ -146,12 +147,85 @@ const items: Item[] = [
   { id: "shorteats", name: "Short Eats Pack", category: "Fast Food", unit: "6 pcs", price: 480, emoji: "🥟" },
 ];
 
+interface FoodService {
+  id: string;
+  name: string;
+  tagline: string;
+  hotline: string;
+  emoji: string;
+  tone: string;
+}
+
+const foodServices: FoodService[] = [
+  {
+    id: "pickme-food",
+    name: "PickMe Food",
+    tagline: "Sri Lanka's #1 food delivery",
+    hotline: "+94 117 429 429",
+    emoji: "🛵",
+    tone: "bg-chart-4/20 text-chart-5",
+  },
+  {
+    id: "uber-eats",
+    name: "Uber Eats LK",
+    tagline: "Restaurants near you, fast",
+    hotline: "+94 117 455 455",
+    emoji: "🍔",
+    tone: "bg-foreground/10 text-foreground",
+  },
+  {
+    id: "kapruka",
+    name: "Kapruka Food",
+    tagline: "Meals, cakes & groceries",
+    hotline: "+94 117 551 111",
+    emoji: "🎂",
+    tone: "bg-accent/15 text-accent",
+  },
+  {
+    id: "uber-ceylon",
+    name: "Glovo Ceylon",
+    tagline: "Anything delivered in minutes",
+    hotline: "+94 117 200 200",
+    emoji: "🥡",
+    tone: "bg-chart-3/15 text-chart-3",
+  },
+  {
+    id: "domino",
+    name: "Domino's Pizza",
+    tagline: "Hot pizza hotline delivery",
+    hotline: "+94 117 826 826",
+    emoji: "🍕",
+    tone: "bg-primary/15 text-primary",
+  },
+  {
+    id: "kfc",
+    name: "KFC Sri Lanka",
+    tagline: "Finger lickin' delivery",
+    hotline: "+94 115 777 777",
+    emoji: "🍗",
+    tone: "bg-destructive/15 text-destructive",
+  },
+];
+
+type PaymentMethod = "card" | "cod";
+
+const paymentMethods: {
+  id: PaymentMethod;
+  label: string;
+  hint: string;
+  icon: typeof CreditCard;
+}[] = [
+  { id: "card", label: "Card", hint: "Visa, Mastercard, Amex", icon: CreditCard },
+  { id: "cod", label: "Cash on delivery", hint: "Pay the rider in cash", icon: Banknote },
+];
+
 function Grocery() {
   const [store, setStore] = useState<Store | null>(null);
   const [active, setActive] = useState<Category | "All">("All");
   const [query, setQuery] = useState("");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [placed, setPlaced] = useState(false);
+  const [payment, setPayment] = useState<PaymentMethod>("card");
 
   const filtered = useMemo(() => {
     return items.filter((it) => {
@@ -209,8 +283,16 @@ function Grocery() {
               <span className="text-muted-foreground">Delivery</span>
               <span className="font-semibold">Rs. {deliveryFee}</span>
             </div>
+            <div className="mt-2 flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Payment</span>
+              <span className="font-semibold">
+                {payment === "card" ? "Card" : "Cash on delivery"}
+              </span>
+            </div>
             <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3 text-base">
-              <span className="font-semibold">Total paid</span>
+              <span className="font-semibold">
+                {payment === "cod" ? "Pay on arrival" : "Total paid"}
+              </span>
               <span className="font-bold text-primary">Rs. {total.toLocaleString()}</span>
             </div>
           </div>
@@ -320,7 +402,70 @@ function Grocery() {
         )}
       </section>
 
-      {/* Categories */}
+      {/* Food delivery services */}
+      <section className="mt-6">
+        <div className="px-5">
+          <h3 className="text-base font-bold">Order in from food delivery 🛵</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Tap to call the hotline and order hot meals straight to you.
+          </p>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3 px-5">
+          {foodServices.map((f) => (
+            <a
+              key={f.id}
+              href={`tel:${f.hotline.replace(/\s/g, "")}`}
+              className="flex flex-col rounded-3xl border border-border/60 bg-card p-4 shadow-sm transition-transform active:scale-95"
+            >
+              <span className={cn("grid h-11 w-11 place-items-center rounded-2xl text-2xl", f.tone)}>
+                {f.emoji}
+              </span>
+              <p className="mt-3 text-sm font-semibold leading-tight">{f.name}</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">{f.tagline}</p>
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary">
+                <Phone className="h-3 w-3" /> {f.hotline}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Payment method */}
+      <section className="mt-6">
+        <h3 className="px-5 text-base font-bold">Payment method</h3>
+        <div className="mt-3 grid grid-cols-2 gap-3 px-5">
+          {paymentMethods.map((p) => {
+            const Icon = p.icon;
+            const selected = payment === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setPayment(p.id)}
+                className={cn(
+                  "flex items-center gap-3 rounded-3xl border p-4 text-left transition-colors",
+                  selected
+                    ? "border-primary bg-primary/5"
+                    : "border-border/60 bg-card",
+                )}
+              >
+                <span
+                  className={cn(
+                    "grid h-10 w-10 shrink-0 place-items-center rounded-2xl",
+                    selected ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold leading-tight">{p.label}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">{p.hint}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="mt-6">
         <h3 className="px-5 text-base font-bold">Categories</h3>
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
