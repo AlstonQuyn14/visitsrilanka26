@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import {
   ShieldAlert,
   Phone,
@@ -26,8 +27,12 @@ import {
   Plus,
   Trash2,
   Share2,
+  LocateFixed,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { geocodeAddress } from "@/lib/geo.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/safety")({
@@ -102,7 +107,9 @@ const hotlines = [
   },
 ];
 
-/* ── Tracked journeys ── */
+/* ── Tracked journeys (real GPS) ── */
+type GeoStatus = "locating" | "live" | "arrived" | "error";
+
 interface TrackedRide {
   id: string;
   vehicle: string;
@@ -110,24 +117,40 @@ interface TrackedRide {
   plate: string;
   pickup: string;
   destination: string;
-  totalMin: number;
-  remainingMin: number;
+  destLat?: number;
+  destLng?: number;
+  totalMeters?: number; // captured on first GPS fix
+  remainingMeters?: number;
+  etaMin?: number;
+  geoStatus: GeoStatus;
+  error?: string;
 }
 
 const vehicleOptions = ["Tuk Tuk", "Car", "Van", "Bus", "Bike", "Other"];
 
-const initialRides: TrackedRide[] = [
-  {
-    id: "r1",
-    vehicle: "Tuk Tuk",
-    driver: "Nimal Perera",
-    plate: "WP-CAB-1234",
-    pickup: "Galle Face Hotel, Colombo",
-    destination: "Sigiriya Rock Fortress",
-    totalMin: 45,
-    remainingMin: 18,
-  },
-];
+const initialRides: TrackedRide[] = [];
+
+/** Great-circle distance between two coordinates, in metres. */
+function haversineMeters(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
+  const R = 6371000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
 
 /* ── How to be safe in Sri Lanka ── */
 const safetyTips = [
@@ -221,47 +244,129 @@ function Safety() {
   const [showSosSent, setShowSosSent] = useState(false);
   const [expandedDisaster, setExpandedDisaster] = useState<string | null>(null);
 
-  /* ── Live vehicle tracking ── */
+  /* ── Live vehicle tracking (real GPS) ── */
   const [rides, setRides] = useState<TrackedRide[]>(initialRides);
   const [showRideForm, setShowRideForm] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [form, setForm] = useState({
     vehicle: vehicleOptions[0],
     driver: "",
     plate: "",
     pickup: "",
     destination: "",
-    duration: "",
   });
 
-  // Simulate "live" movement: tick down remaining ETA every 5 seconds.
-  useEffect(() => {
-    if (rides.length === 0) return;
-    const interval = setInterval(() => {
-      setRides((prev) =>
-        prev.map((r) =>
-          r.remainingMin > 0 ? { ...r, remainingMin: Math.max(0, r.remainingMin - 1) } : r,
-        ),
-      );
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [rides.length]);
+  const geocode = useServerFn(geocodeAddress);
+  // Last GPS fix, used to derive speed and to share live location.
+  const lastFix = useRef<{ lat: number; lng: number; t: number } | null>(null);
 
-  function addRide() {
+  // Any journey that has coordinates and hasn't arrived needs the GPS watcher.
+  const needsGps = rides.some(
+    (r) => r.destLat != null && r.geoStatus !== "arrived",
+  );
+
+  // Real GPS tracking: recompute remaining distance, ETA and progress on every
+  // location update from the device.
+  useEffect(() => {
+    if (!needsGps) return;
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      setGeoError("Live GPS isn't supported on this device.");
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setGeoError(null);
+        const { latitude, longitude, speed } = pos.coords;
+        const t = pos.timestamp;
+
+        // Determine current speed (m/s): device value, else derived from the
+        // distance covered since the previous fix, else a 30 km/h fallback.
+        let mps: number | null =
+          speed != null && speed > 0.5 ? speed : null;
+        if (mps == null && lastFix.current) {
+          const moved = haversineMeters(
+            lastFix.current.lat,
+            lastFix.current.lng,
+            latitude,
+            longitude,
+          );
+          const dt = (t - lastFix.current.t) / 1000;
+          if (dt > 0 && moved > 2) mps = moved / dt;
+        }
+        const effSpeed = mps && mps > 0.5 ? mps : 8.3;
+        lastFix.current = { lat: latitude, lng: longitude, t };
+
+        setRides((prev) =>
+          prev.map((r) => {
+            if (r.destLat == null || r.destLng == null) return r;
+            if (r.geoStatus === "arrived") return r;
+            const remaining = haversineMeters(
+              latitude,
+              longitude,
+              r.destLat,
+              r.destLng,
+            );
+            const total = r.totalMeters ?? Math.max(remaining, 1);
+            const arrived = remaining < 50;
+            const etaMin = arrived
+              ? 0
+              : Math.max(1, Math.round(remaining / effSpeed / 60));
+            return {
+              ...r,
+              remainingMeters: remaining,
+              totalMeters: total,
+              etaMin,
+              geoStatus: arrived ? "arrived" : "live",
+            };
+          }),
+        );
+      },
+      (err) => {
+        setGeoError(
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied. Allow location access to track live."
+            : "Couldn't get your location. Make sure GPS is on.",
+        );
+      },
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [needsGps]);
+
+  async function addRide() {
     if (!form.pickup.trim() || !form.destination.trim()) return;
-    const total = Math.max(1, parseInt(form.duration, 10) || 30);
+    const id = `r${Date.now()}`;
     const newRide: TrackedRide = {
-      id: `r${Date.now()}`,
+      id,
       vehicle: form.vehicle,
       driver: form.driver.trim() || "My driver",
       plate: form.plate.trim() || "—",
       pickup: form.pickup.trim(),
       destination: form.destination.trim(),
-      totalMin: total,
-      remainingMin: total,
+      geoStatus: "locating",
     };
     setRides((prev) => [newRide, ...prev]);
-    setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "", duration: "" });
+    setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "" });
     setShowRideForm(false);
+
+    try {
+      const res = await geocode({ data: { address: newRide.destination } });
+      setRides((prev) =>
+        prev.map((r) =>
+          r.id === id ? { ...r, destLat: res.lat, destLng: res.lng } : r,
+        ),
+      );
+    } catch {
+      setRides((prev) =>
+        prev.map((r) =>
+          r.id === id
+            ? { ...r, geoStatus: "error", error: "Couldn't find that destination." }
+            : r,
+        ),
+      );
+    }
   }
 
   function removeRide(id: string) {
@@ -269,13 +374,19 @@ function Safety() {
   }
 
   function shareRide(ride: TrackedRide) {
-    const text = `Tracking my ${ride.vehicle} from ${ride.pickup} to ${ride.destination}. ETA ~${ride.remainingMin} min. Plate: ${ride.plate}.`;
+    const cur = lastFix.current;
+    const locLink = cur
+      ? ` My live location: https://maps.google.com/?q=${cur.lat},${cur.lng}`
+      : "";
+    const eta = ride.etaMin != null ? ` ETA ~${ride.etaMin} min.` : "";
+    const text = `Tracking my ${ride.vehicle} to ${ride.destination}.${eta} Plate: ${ride.plate}.${locLink}`;
     if (navigator.share) {
       navigator.share({ title: "My live journey", text }).catch(() => {});
     } else {
       navigator.clipboard?.writeText(text).catch(() => {});
     }
   }
+
 
 
 
@@ -459,18 +570,11 @@ function Safety() {
                     className="w-full bg-transparent text-sm outline-none"
                   />
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5">
-                  <Clock className="h-4 w-4 shrink-0 text-chart-3" />
-                  <input
-                    value={form.duration}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, duration: e.target.value.replace(/[^\d]/g, "") }))
-                    }
-                    inputMode="numeric"
-                    placeholder="Estimated trip time (minutes)"
-                    className="w-full bg-transparent text-sm outline-none"
-                  />
-                </div>
+                <p className="flex items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
+                  <LocateFixed className="h-3.5 w-3.5 text-primary" />
+                  Distance &amp; ETA update live from your phone's GPS.
+                </p>
+
 
                 <button
                   onClick={addRide}
@@ -483,14 +587,52 @@ function Safety() {
             </div>
           )}
 
+          {geoError && (
+            <div className="mb-3 flex items-start gap-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3 text-xs text-destructive">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{geoError}</span>
+            </div>
+          )}
+
           {rides.length > 0 ? (
             <div className="space-y-3">
               {rides.map((ride) => {
-                const progress = Math.min(
-                  100,
-                  Math.round(((ride.totalMin - ride.remainingMin) / ride.totalMin) * 100),
-                );
-                const arrived = ride.remainingMin <= 0;
+                const arrived = ride.geoStatus === "arrived";
+                const locating = ride.geoStatus === "locating";
+                const errored = ride.geoStatus === "error";
+                const progress =
+                  ride.totalMeters && ride.remainingMeters != null
+                    ? Math.min(
+                        100,
+                        Math.max(
+                          0,
+                          Math.round(
+                            ((ride.totalMeters - ride.remainingMeters) /
+                              ride.totalMeters) *
+                              100,
+                          ),
+                        ),
+                      )
+                    : 0;
+
+                const badge = errored
+                  ? "GPS error"
+                  : locating
+                    ? "Locating…"
+                    : arrived
+                      ? "Arrived"
+                      : ride.etaMin != null
+                        ? `${ride.etaMin} min`
+                        : "Live";
+
+                const statusText = errored
+                  ? ride.error ?? "Couldn't track this journey"
+                  : locating
+                    ? "Finding your location…"
+                    : arrived
+                      ? "Reached destination"
+                      : "En route — live GPS";
+
                 return (
                   <div
                     key={ride.id}
@@ -508,11 +650,16 @@ function Safety() {
                       </div>
                       <span
                         className={cn(
-                          "rounded-full px-2.5 py-1 text-xs font-bold",
-                          arrived ? "bg-chart-3/15 text-chart-3" : "bg-primary/10 text-primary",
+                          "flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold",
+                          errored
+                            ? "bg-destructive/10 text-destructive"
+                            : arrived
+                              ? "bg-chart-3/15 text-chart-3"
+                              : "bg-primary/10 text-primary",
                         )}
                       >
-                        {arrived ? "Arrived" : `${ride.remainingMin} min`}
+                        {locating && <Loader2 className="h-3 w-3 animate-spin" />}
+                        {badge}
                       </span>
                     </div>
 
@@ -526,28 +673,37 @@ function Safety() {
                         <span className="text-foreground">{ride.destination}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5 text-chart-3" />
+                        <LocateFixed className="h-3.5 w-3.5 text-chart-3" />
                         <span>
                           Status:{" "}
-                          <span className="font-medium text-foreground">
-                            {arrived ? "Reached destination" : "En route — live"}
-                          </span>
+                          <span className="font-medium text-foreground">{statusText}</span>
+                          {ride.remainingMeters != null && !arrived && (
+                            <span className="text-muted-foreground">
+                              {" "}· {formatDistance(ride.remainingMeters)} left
+                            </span>
+                          )}
                         </span>
                       </div>
                     </div>
 
-                    {/* Live progress bar */}
-                    <div className="mt-3">
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                        <div
-                          className="h-full rounded-full bg-primary transition-all duration-1000"
-                          style={{ width: `${arrived ? 100 : Math.max(4, progress)}%` }}
-                        />
+                    {/* Live progress bar (GPS-driven) */}
+                    {!errored && (
+                      <div className="mt-3">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all duration-1000"
+                            style={{ width: `${arrived ? 100 : Math.max(4, progress)}%` }}
+                          />
+                        </div>
+                        <p className="mt-1 text-right text-[10px] text-muted-foreground">
+                          {arrived
+                            ? "Journey complete"
+                            : locating
+                              ? "Waiting for GPS…"
+                              : `${progress}% of the way`}
+                        </p>
                       </div>
-                      <p className="mt-1 text-right text-[10px] text-muted-foreground">
-                        {arrived ? "Journey complete" : `${progress}% of the way`}
-                      </p>
-                    </div>
+                    )}
 
                     <div className="mt-3 grid grid-cols-3 gap-2">
                       <a
@@ -584,6 +740,7 @@ function Safety() {
             </div>
           )}
         </section>
+
 
 
         {/* ── Emergency Hotlines ── */}
