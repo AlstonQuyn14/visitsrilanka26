@@ -225,6 +225,7 @@ function Grocery() {
   const [query, setQuery] = useState("");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [placed, setPlaced] = useState(false);
+  const [payment, setPayment] = useState<PaymentMethod>("card");
 
   const filtered = useMemo(() => {
     return items.filter((it) => {
