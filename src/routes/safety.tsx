@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { geocodeAddress } from "@/lib/geo.functions";
+import { recordNotification } from "@/lib/notifications";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/safety")({
@@ -312,6 +313,13 @@ function Safety() {
             const etaMin = arrived
               ? 0
               : Math.max(1, Math.round(remaining / effSpeed / 60));
+            if (arrived) {
+              void recordNotification(
+                "tracking",
+                "You've arrived at your destination",
+                `${r.vehicle} · ${r.destination}`,
+              );
+            }
             return {
               ...r,
               remainingMeters: remaining,
@@ -350,6 +358,11 @@ function Safety() {
     setRides((prev) => [newRide, ...prev]);
     setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "" });
     setShowRideForm(false);
+    void recordNotification(
+      "tracking",
+      "Live vehicle tracking started",
+      `${newRide.vehicle} · ${newRide.pickup} → ${newRide.destination}`,
+    );
 
     try {
       const res = await geocode({ data: { address: newRide.destination } });

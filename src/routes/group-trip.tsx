@@ -9,10 +9,12 @@ import {
   PiggyBank,
   Check,
   Plane,
+  Send,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { recordNotification } from "@/lib/notifications";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/group-trip")({
@@ -78,6 +80,17 @@ function GroupTrip() {
     setMembers((prev) =>
       prev.length > 1 ? prev.filter((m) => m.id !== id) : prev,
     );
+
+  const [shared, setShared] = useState(false);
+  const shareWithGroup = () => {
+    void recordNotification(
+      "group",
+      "Trip budget shared with your group",
+      `${formatLKR(perPerson)} each · ${shareCount} travellers · ${formatLKR(budgetValue)} total`,
+    );
+    setShared(true);
+    setTimeout(() => setShared(false), 3000);
+  };
 
   return (
     <AppShell>
@@ -283,6 +296,28 @@ function GroupTrip() {
                   </li>
                 ))}
               </ul>
+
+              <button
+                onClick={shareWithGroup}
+                className={cn(
+                  "mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+                  shared
+                    ? "bg-chart-3/15 text-chart-3"
+                    : "bg-primary text-primary-foreground",
+                )}
+              >
+                {shared ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Shared with group
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    Share split with group
+                  </>
+                )}
+              </button>
             </>
           ) : (
             <div className="mt-3 flex flex-col items-center gap-2 rounded-xl bg-secondary/50 px-4 py-6 text-center">
