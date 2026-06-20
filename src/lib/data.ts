@@ -106,6 +106,32 @@ export const destinations: Destination[] = [
     lat: 6.3724,
     lng: 81.5185,
   },
+
+  // ===== Famous, iconic & religious places =====
+  { id: "anuradhapura", name: "Anuradhapura Sacred City", region: "North Central", category: "Historical", image: destSigiriya, rating: 4.8, reviews: 7820, tagline: "Ancient capital of stupas & sacred Bodhi tree", popular: true, lat: 8.3114, lng: 80.4037 },
+  { id: "polonnaruwa", name: "Polonnaruwa Ancient City", region: "North Central", category: "Historical", image: destGalle, rating: 4.7, reviews: 6210, tagline: "Royal ruins & the Gal Vihara rock Buddhas", lat: 7.9403, lng: 81.0188 },
+  { id: "dambulla", name: "Dambulla Cave Temple", region: "Central Province", category: "Temples", image: destKandy, rating: 4.8, reviews: 9450, tagline: "Golden cave shrines with 150+ Buddha statues", popular: true, lat: 7.8567, lng: 80.6492 },
+  { id: "sri-pada", name: "Adam's Peak (Sri Pada)", region: "Sabaragamuwa", category: "Temples", image: destElla, rating: 4.9, reviews: 8130, tagline: "Sacred summit pilgrimage & sunrise climb", popular: true, lat: 6.8096, lng: 80.4994 },
+  { id: "kelaniya", name: "Kelaniya Raja Maha Vihara", region: "Western Province", category: "Temples", image: destKandy, rating: 4.7, reviews: 5340, tagline: "Ancient temple of vivid murals near Colombo", lat: 6.9553, lng: 79.9219 },
+  { id: "jaya-sri-maha-bodhi", name: "Jaya Sri Maha Bodhi", region: "Anuradhapura", category: "Temples", image: destKandy, rating: 4.9, reviews: 6890, tagline: "World's oldest documented sacred fig tree", lat: 8.3447, lng: 80.3964 },
+  { id: "mihintale", name: "Mihintale", region: "North Central", category: "Temples", image: destSigiriya, rating: 4.6, reviews: 3920, tagline: "Cradle of Buddhism in Sri Lanka", lat: 8.3517, lng: 80.5089 },
+  { id: "ruwanwelisaya", name: "Ruwanwelisaya Stupa", region: "Anuradhapura", category: "Temples", image: destSigiriya, rating: 4.8, reviews: 5120, tagline: "Majestic white dagoba glowing at dusk", lat: 8.3494, lng: 80.3964 },
+  { id: "nallur-kovil", name: "Nallur Kandaswamy Kovil", region: "Jaffna", category: "Temples", image: destKandy, rating: 4.7, reviews: 4380, tagline: "Golden Hindu temple of the north", lat: 9.6766, lng: 80.0264 },
+  { id: "munneswaram", name: "Munneswaram Temple", region: "Chilaw", category: "Temples", image: destKandy, rating: 4.5, reviews: 2670, tagline: "Ancient Shiva temple complex", lat: 7.6097, lng: 79.8186 },
+  { id: "koneswaram", name: "Koneswaram Temple", region: "Trincomalee", category: "Temples", image: destBeach, rating: 4.8, reviews: 5630, tagline: "Cliff-top Hindu shrine over the ocean", popular: true, lat: 8.5828, lng: 81.2453 },
+  { id: "gangaramaya", name: "Gangaramaya Temple", region: "Colombo", category: "Temples", image: destKandy, rating: 4.6, reviews: 7240, tagline: "Eclectic city temple & museum treasures", lat: 6.9166, lng: 79.8562 },
+  { id: "nine-arch", name: "Nine Arch Bridge", region: "Ella", category: "Historical", image: destElla, rating: 4.8, reviews: 10240, tagline: "Iconic colonial-era viaduct in the tea hills", popular: true, lat: 6.8767, lng: 81.0606 },
+  { id: "nuwara-eliya", name: "Nuwara Eliya", region: "Central Province", category: "Nature", image: destElla, rating: 4.7, reviews: 8410, tagline: "Little England amid cool emerald highlands", popular: true, lat: 6.9497, lng: 80.7891 },
+  { id: "horton-plains", name: "Horton Plains & World's End", region: "Central Province", category: "Nature", image: destYala, rating: 4.7, reviews: 5980, tagline: "Misty plateau with a sheer cliff drop", lat: 6.8019, lng: 80.8064 },
+  { id: "ravana-falls", name: "Ravana Falls", region: "Ella", category: "Nature", image: destElla, rating: 4.5, reviews: 4310, tagline: "Cascading waterfall steeped in legend", lat: 6.8487, lng: 81.0458 },
+  { id: "pinnawala", name: "Pinnawala Elephant Orphanage", region: "Sabaragamuwa", category: "Nature", image: destYala, rating: 4.4, reviews: 9120, tagline: "Herds bathing in the river daily", lat: 7.3006, lng: 80.3853 },
+  { id: "udawalawe", name: "Udawalawe National Park", region: "Sabaragamuwa", category: "Nature", image: destYala, rating: 4.7, reviews: 5470, tagline: "Best place to see wild elephants up close", lat: 6.4389, lng: 80.8889 },
+  { id: "arugam-bay", name: "Arugam Bay", region: "Eastern Province", category: "Beaches", image: destBeach, rating: 4.7, reviews: 6890, tagline: "World-class surf point & laid-back vibes", popular: true, lat: 6.8403, lng: 81.836 },
+  { id: "unawatuna", name: "Unawatuna Beach", region: "Southern Province", category: "Beaches", image: destBeach, rating: 4.6, reviews: 7430, tagline: "Crescent bay of calm turquoise water", lat: 6.0094, lng: 80.2497 },
+  { id: "trincomalee", name: "Trincomalee & Nilaveli", region: "Eastern Province", category: "Beaches", image: destBeach, rating: 4.7, reviews: 5210, tagline: "Pristine white sands & Pigeon Island reefs", lat: 8.5874, lng: 81.2152 },
+  { id: "pasikuda", name: "Pasikuda Beach", region: "Eastern Province", category: "Beaches", image: destBeach, rating: 4.5, reviews: 3980, tagline: "Shallow lagoon perfect for wading & swims", lat: 7.9242, lng: 81.5644 },
+  { id: "colombo", name: "Colombo City", region: "Western Province", category: "Historical", image: destGalle, rating: 4.5, reviews: 11320, tagline: "Vibrant capital of markets, food & history", lat: 6.9271, lng: 79.8612 },
+  { id: "jaffna-fort", name: "Jaffna Fort", region: "Northern Province", category: "Historical", image: destGalle, rating: 4.5, reviews: 3640, tagline: "Dutch sea fort at the island's northern tip", lat: 9.6615, lng: 80.0255 },
 ];
 
 /** Iconic landmarks shown as pins on the live map (no detail cards needed). */
@@ -136,17 +162,9 @@ export const iconicPlaces: IconicPlace[] = [
     lat: d.lat,
     lng: d.lng,
   })),
-  { id: "adams-peak", name: "Adam's Peak (Sri Pada)", region: "Sabaragamuwa", category: "Nature", emoji: "⛰️", lat: 6.8096, lng: 80.4994 },
-  { id: "nine-arch", name: "Nine Arch Bridge", region: "Ella", category: "Historical", emoji: "🌉", lat: 6.8767, lng: 81.0606 },
-  { id: "anuradhapura", name: "Anuradhapura Ruins", region: "North Central", category: "Historical", emoji: "🏛️", lat: 8.3114, lng: 80.4037 },
-  { id: "polonnaruwa", name: "Polonnaruwa Ancient City", region: "North Central", category: "Historical", emoji: "🗿", lat: 7.9403, lng: 81.0188 },
-  { id: "dambulla", name: "Dambulla Cave Temple", region: "Central", category: "Temples", emoji: "🛕", lat: 7.8567, lng: 80.6492 },
-  { id: "nuwara-eliya", name: "Nuwara Eliya", region: "Central", category: "Nature", emoji: "🍃", lat: 6.9497, lng: 80.7891 },
-  { id: "arugam-bay", name: "Arugam Bay", region: "Eastern", category: "Beaches", emoji: "🏄", lat: 6.8403, lng: 81.836 },
-  { id: "unawatuna", name: "Unawatuna Beach", region: "Southern", category: "Beaches", emoji: "🏝️", lat: 6.0094, lng: 80.2497 },
-  { id: "colombo", name: "Colombo City", region: "Western", category: "Dining", emoji: "🏙️", lat: 6.9271, lng: 79.8612 },
-  { id: "trincomalee", name: "Trincomalee", region: "Eastern", category: "Beaches", emoji: "⚓", lat: 8.5874, lng: 81.2152 },
-  { id: "jaffna", name: "Jaffna Fort", region: "Northern", category: "Historical", emoji: "🏰", lat: 9.6615, lng: 80.0255 },
+  { id: "ritigala", name: "Ritigala Forest Monastery", region: "North Central", category: "Historical", emoji: "🌲", lat: 8.1106, lng: 80.6553 },
+  { id: "sinharaja", name: "Sinharaja Rainforest", region: "Sabaragamuwa", category: "Nature", emoji: "🌳", lat: 6.4044, lng: 80.4567 },
+  { id: "knuckles", name: "Knuckles Mountain Range", region: "Central", category: "Nature", emoji: "⛰️", lat: 7.4500, lng: 80.7833 },
 ];
 
 /** Centre of Sri Lanka for the initial map view. */
