@@ -102,8 +102,21 @@ const hotlines = [
   },
 ];
 
-/* ── Mock active rides ── */
-const activeRides = [
+/* ── Tracked journeys ── */
+interface TrackedRide {
+  id: string;
+  vehicle: string;
+  driver: string;
+  plate: string;
+  pickup: string;
+  destination: string;
+  totalMin: number;
+  remainingMin: number;
+}
+
+const vehicleOptions = ["Tuk Tuk", "Car", "Van", "Bus", "Bike", "Other"];
+
+const initialRides: TrackedRide[] = [
   {
     id: "r1",
     vehicle: "Tuk Tuk",
@@ -111,8 +124,8 @@ const activeRides = [
     plate: "WP-CAB-1234",
     pickup: "Galle Face Hotel, Colombo",
     destination: "Sigiriya Rock Fortress",
-    status: "en-route" as const,
-    eta: "18 min",
+    totalMin: 45,
+    remainingMin: 18,
   },
 ];
 
