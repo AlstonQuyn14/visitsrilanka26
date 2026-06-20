@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import {
   ShieldAlert,
   Phone,
@@ -26,8 +27,12 @@ import {
   Plus,
   Trash2,
   Share2,
+  LocateFixed,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { geocodeAddress } from "@/lib/geo.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/safety")({
