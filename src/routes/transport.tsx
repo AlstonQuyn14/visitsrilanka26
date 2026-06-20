@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/transport")({
   head: () => ({
     meta: [
-      { title: "Book a Ride — Serendib" },
+      { title: "Book a Ride — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Book a Tuk Tuk, Car, Van or Bus across Sri Lanka. Choose your pickup, destination, time and passenger details with Serendib transport.",
+          "Book a Tuk Tuk, Car, Van or Bus across Sri Lanka. Choose your pickup, destination, time and passenger details with Visit Sri Lanka transport.",
       },
-      { property: "og:title", content: "Book a Ride — Serendib" },
+      { property: "og:title", content: "Book a Ride — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

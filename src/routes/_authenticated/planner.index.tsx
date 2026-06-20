@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/planner/")({
   head: () => ({
     meta: [
-      { title: "AI Travel Assistant — Serendib" },
+      { title: "AI Travel Assistant — Visit Sri Lanka" },
       {
         name: "description",
         content:

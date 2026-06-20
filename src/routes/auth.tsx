@@ -13,11 +13,11 @@ import { lovable } from "@/integrations/lovable/index";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Serendib" },
+      { title: "Sign in — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Sign in to Serendib to explore Sri Lanka in your language with personalised trips, transport, guides and AI travel help.",
+          "Sign in to Visit Sri Lanka to explore Sri Lanka in your language with personalised trips, transport, guides and AI travel help.",
       },
     ],
   }),
@@ -217,7 +217,7 @@ function AuthPage() {
 
         {/* Mode toggle */}
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "New to Serendib?" : "Already have an account?"}{" "}
+          {mode === "signin" ? "New to Visit Sri Lanka?" : "Already have an account?"}{" "}
           <button
             type="button"
             className="font-semibold text-primary"

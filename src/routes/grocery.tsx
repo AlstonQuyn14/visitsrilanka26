@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/grocery")({
   head: () => ({
     meta: [
-      { title: "Groceries & Essentials — Serendib" },
+      { title: "Groceries & Essentials — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Order groceries and essentials from Cargills, Keells, Laughs, Spar and Arpico. Fresh vegetables, food, fast food and daily essentials delivered to your hotel or villa in Sri Lanka.",
       },
-      { property: "og:title", content: "Groceries & Essentials — Serendib" },
+      { property: "og:title", content: "Groceries & Essentials — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

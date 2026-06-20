@@ -38,13 +38,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/safety")({
   head: () => ({
     meta: [
-      { title: "Safety & SOS — Serendib" },
+      { title: "Safety & SOS — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Emergency SOS, vehicle tracking, and hotlines for tourists in Sri Lanka. Police, ambulance, hospital, and airport services.",
       },
-      { property: "og:title", content: "Safety & SOS — Serendib" },
+      { property: "og:title", content: "Safety & SOS — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

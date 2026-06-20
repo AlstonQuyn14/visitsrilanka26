@@ -18,13 +18,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/group-trip")({
   head: () => ({
     meta: [
-      { title: "Group Trip — Serendib" },
+      { title: "Group Trip — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Plan a group trip in Sri Lanka. Add members, set a shared budget and split it equally across travellers with Serendib.",
+          "Plan a group trip in Sri Lanka. Add members, set a shared budget and split it equally across travellers with Visit Sri Lanka.",
       },
-      { property: "og:title", content: "Group Trip — Serendib" },
+      { property: "og:title", content: "Group Trip — Visit Sri Lanka" },
       {
         property: "og:description",
         content:
