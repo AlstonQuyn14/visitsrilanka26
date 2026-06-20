@@ -244,47 +244,129 @@ function Safety() {
   const [showSosSent, setShowSosSent] = useState(false);
   const [expandedDisaster, setExpandedDisaster] = useState<string | null>(null);
 
-  /* ── Live vehicle tracking ── */
+  /* ── Live vehicle tracking (real GPS) ── */
   const [rides, setRides] = useState<TrackedRide[]>(initialRides);
   const [showRideForm, setShowRideForm] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [form, setForm] = useState({
     vehicle: vehicleOptions[0],
     driver: "",
     plate: "",
     pickup: "",
     destination: "",
-    duration: "",
   });
 
-  // Simulate "live" movement: tick down remaining ETA every 5 seconds.
-  useEffect(() => {
-    if (rides.length === 0) return;
-    const interval = setInterval(() => {
-      setRides((prev) =>
-        prev.map((r) =>
-          r.remainingMin > 0 ? { ...r, remainingMin: Math.max(0, r.remainingMin - 1) } : r,
-        ),
-      );
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [rides.length]);
+  const geocode = useServerFn(geocodeAddress);
+  // Last GPS fix, used to derive speed and to share live location.
+  const lastFix = useRef<{ lat: number; lng: number; t: number } | null>(null);
 
-  function addRide() {
+  // Any journey that has coordinates and hasn't arrived needs the GPS watcher.
+  const needsGps = rides.some(
+    (r) => r.destLat != null && r.geoStatus !== "arrived",
+  );
+
+  // Real GPS tracking: recompute remaining distance, ETA and progress on every
+  // location update from the device.
+  useEffect(() => {
+    if (!needsGps) return;
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      setGeoError("Live GPS isn't supported on this device.");
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setGeoError(null);
+        const { latitude, longitude, speed } = pos.coords;
+        const t = pos.timestamp;
+
+        // Determine current speed (m/s): device value, else derived from the
+        // distance covered since the previous fix, else a 30 km/h fallback.
+        let mps: number | null =
+          speed != null && speed > 0.5 ? speed : null;
+        if (mps == null && lastFix.current) {
+          const moved = haversineMeters(
+            lastFix.current.lat,
+            lastFix.current.lng,
+            latitude,
+            longitude,
+          );
+          const dt = (t - lastFix.current.t) / 1000;
+          if (dt > 0 && moved > 2) mps = moved / dt;
+        }
+        const effSpeed = mps && mps > 0.5 ? mps : 8.3;
+        lastFix.current = { lat: latitude, lng: longitude, t };
+
+        setRides((prev) =>
+          prev.map((r) => {
+            if (r.destLat == null || r.destLng == null) return r;
+            if (r.geoStatus === "arrived") return r;
+            const remaining = haversineMeters(
+              latitude,
+              longitude,
+              r.destLat,
+              r.destLng,
+            );
+            const total = r.totalMeters ?? Math.max(remaining, 1);
+            const arrived = remaining < 50;
+            const etaMin = arrived
+              ? 0
+              : Math.max(1, Math.round(remaining / effSpeed / 60));
+            return {
+              ...r,
+              remainingMeters: remaining,
+              totalMeters: total,
+              etaMin,
+              geoStatus: arrived ? "arrived" : "live",
+            };
+          }),
+        );
+      },
+      (err) => {
+        setGeoError(
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied. Allow location access to track live."
+            : "Couldn't get your location. Make sure GPS is on.",
+        );
+      },
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [needsGps]);
+
+  async function addRide() {
     if (!form.pickup.trim() || !form.destination.trim()) return;
-    const total = Math.max(1, parseInt(form.duration, 10) || 30);
+    const id = `r${Date.now()}`;
     const newRide: TrackedRide = {
-      id: `r${Date.now()}`,
+      id,
       vehicle: form.vehicle,
       driver: form.driver.trim() || "My driver",
       plate: form.plate.trim() || "—",
       pickup: form.pickup.trim(),
       destination: form.destination.trim(),
-      totalMin: total,
-      remainingMin: total,
+      geoStatus: "locating",
     };
     setRides((prev) => [newRide, ...prev]);
-    setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "", duration: "" });
+    setForm({ vehicle: vehicleOptions[0], driver: "", plate: "", pickup: "", destination: "" });
     setShowRideForm(false);
+
+    try {
+      const res = await geocode({ data: { address: newRide.destination } });
+      setRides((prev) =>
+        prev.map((r) =>
+          r.id === id ? { ...r, destLat: res.lat, destLng: res.lng } : r,
+        ),
+      );
+    } catch {
+      setRides((prev) =>
+        prev.map((r) =>
+          r.id === id
+            ? { ...r, geoStatus: "error", error: "Couldn't find that destination." }
+            : r,
+        ),
+      );
+    }
   }
 
   function removeRide(id: string) {
@@ -292,13 +374,19 @@ function Safety() {
   }
 
   function shareRide(ride: TrackedRide) {
-    const text = `Tracking my ${ride.vehicle} from ${ride.pickup} to ${ride.destination}. ETA ~${ride.remainingMin} min. Plate: ${ride.plate}.`;
+    const cur = lastFix.current;
+    const locLink = cur
+      ? ` My live location: https://maps.google.com/?q=${cur.lat},${cur.lng}`
+      : "";
+    const eta = ride.etaMin != null ? ` ETA ~${ride.etaMin} min.` : "";
+    const text = `Tracking my ${ride.vehicle} to ${ride.destination}.${eta} Plate: ${ride.plate}.${locLink}`;
     if (navigator.share) {
       navigator.share({ title: "My live journey", text }).catch(() => {});
     } else {
       navigator.clipboard?.writeText(text).catch(() => {});
     }
   }
+
 
 
 
