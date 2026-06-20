@@ -10,13 +10,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore Places — Serendib" },
+      { title: "Explore Places — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Browse Sri Lanka's beaches, historical sites, temples, nature reserves, hotels and dining on the Serendib Places Explorer.",
+          "Browse Sri Lanka's beaches, historical sites, temples, nature reserves, hotels and dining on the Visit Sri Lanka Places Explorer.",
       },
-      { property: "og:title", content: "Explore Places — Serendib" },
+      { property: "og:title", content: "Explore Places — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

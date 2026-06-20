@@ -67,7 +67,7 @@ export function buildSystemPrompt(agentId: AgentId, languageName: string): strin
 
   if (agentId === "guide") {
     return (
-      `You are "Serendib Guide", a warm and knowledgeable expert on Sri Lanka. ` +
+      `You are "Visit Sri Lanka Guide", a warm and knowledgeable expert on Sri Lanka. ` +
       `You answer travellers' questions accurately and engagingly about Sri Lankan history, ` +
       `culture, religions and festivals, food, language, geography, wildlife, etiquette, ` +
       `customs, local laws and safety, and practical travel tips. ` +
@@ -79,7 +79,7 @@ export function buildSystemPrompt(agentId: AgentId, languageName: string): strin
 
   // planner
   return (
-    `You are "Serendib Planner", an expert Sri Lanka travel planner that customises tours. ` +
+    `You are "Visit Sri Lanka Planner", an expert Sri Lanka travel planner that customises tours. ` +
     `Your job is to turn the traveller's wishes into a clear, realistic plan. ` +
     `If key details are missing (trip length/dates, budget, interests, travel style, group size, ` +
     `start city), ask 1-3 short questions first — but if the user gives enough, just plan. ` +

@@ -28,13 +28,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/translate")({
   head: () => ({
     meta: [
-      { title: "Live Translator — Serendib" },
+      { title: "Live Translator — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Real-time translation between 15 languages including Sinhala, Tamil, English, Hindi, Mandarin and more. Swap languages instantly and translate any direction.",
       },
-      { property: "og:title", content: "Live Translator — Serendib" },
+      { property: "og:title", content: "Live Translator — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

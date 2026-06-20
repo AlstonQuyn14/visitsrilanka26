@@ -13,13 +13,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Serendib — Explore Sri Lanka" },
+      { title: "Visit Sri Lanka — Explore Sri Lanka" },
       {
         name: "description",
         content:
           "Your all-in-one Sri Lanka travel companion: discover destinations, check local weather, book rides, find guides and stay safe.",
       },
-      { property: "og:title", content: "Serendib — Explore Sri Lanka" },
+      { property: "og:title", content: "Visit Sri Lanka — Explore Sri Lanka" },
       {
         property: "og:description",
         content:
@@ -47,7 +47,7 @@ function Home() {
 
   return (
     <AppShell>
-      <h1 className="sr-only">Serendib — Explore Sri Lanka</h1>
+      <h1 className="sr-only">Visit Sri Lanka — Explore Sri Lanka</h1>
       <HomeHeader />
 
       <section className="mt-6">

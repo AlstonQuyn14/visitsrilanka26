@@ -27,13 +27,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/guides/register")({
   head: () => ({
     meta: [
-      { title: "Become a Guide — Serendib" },
+      { title: "Become a Guide — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Register as a local tour guide in Sri Lanka. Share your languages, specialties, and experience with travelers.",
       },
-      { property: "og:title", content: "Become a Guide — Serendib" },
+      { property: "og:title", content: "Become a Guide — Visit Sri Lanka" },
       {
         property: "og:description",
         content: "Join our verified local guide network and connect with travelers.",

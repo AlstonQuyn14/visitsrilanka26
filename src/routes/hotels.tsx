@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/hotels")({
   head: () => ({
     meta: [
-      { title: "Hotels & Rentals in Sri Lanka — Serendib" },
+      { title: "Hotels & Rentals in Sri Lanka — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Famous Sri Lankan hotels, biggest resorts and rentable villas with hotlines — Shangri-La, Cinnamon Grand, Heritance Kandalama, Jetwing, Galle Fort villas and more.",
       },
-      { property: "og:title", content: "Hotels & Rentals in Sri Lanka — Serendib" },
+      { property: "og:title", content: "Hotels & Rentals in Sri Lanka — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

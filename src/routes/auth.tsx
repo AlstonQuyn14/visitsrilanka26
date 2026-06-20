@@ -13,11 +13,11 @@ import { lovable } from "@/integrations/lovable/index";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Serendib" },
+      { title: "Sign in — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Sign in to Serendib to explore Sri Lanka in your language with personalised trips, transport, guides and AI travel help.",
+          "Sign in to Visit Sri Lanka to explore Sri Lanka in your language with personalised trips, transport, guides and AI travel help.",
       },
     ],
   }),
@@ -96,11 +96,18 @@ function AuthPage() {
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-background px-6 pb-10 pt-[max(1.25rem,env(safe-area-inset-top))] shadow-sm">
         {/* Top bar */}
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-2 font-display text-lg font-extrabold text-foreground">
+          <span className="flex items-center gap-2.5 font-display text-foreground">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-primary text-primary-foreground">
               <MapPin className="h-5 w-5" />
             </span>
-            Visit Sri Lanka
+            <span className="flex flex-col leading-none">
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Visit
+              </span>
+              <span className="text-lg font-extrabold tracking-tight">
+                Sri Lanka
+              </span>
+            </span>
           </span>
           <LanguageSelect value={language} onChange={handleLanguage} />
         </div>
@@ -217,7 +224,7 @@ function AuthPage() {
 
         {/* Mode toggle */}
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "New to Serendib?" : "Already have an account?"}{" "}
+          {mode === "signin" ? "New to Visit Sri Lanka?" : "Already have an account?"}{" "}
           <button
             type="button"
             className="font-semibold text-primary"

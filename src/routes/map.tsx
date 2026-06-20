@@ -17,13 +17,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "Live Map — Serendib" },
+      { title: "Live Map — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Explore an interactive 3D map of Sri Lanka, discover iconic landmarks and add waypoints to plan your route.",
       },
-      { property: "og:title", content: "Live Map — Serendib" },
+      { property: "og:title", content: "Live Map — Visit Sri Lanka" },
       {
         property: "og:description",
         content:

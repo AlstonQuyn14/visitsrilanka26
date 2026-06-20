@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Main Events & Holidays — Serendib" },
+      { title: "Main Events & Holidays — Visit Sri Lanka" },
       {
         name: "description",
         content:
           "Discover Sri Lanka's main events, festivals and public holidays — Vesak, Poson, Poya days, Christmas, Hajj, Independence Day, Sinhala & Tamil New Year and more.",
       },
-      { property: "og:title", content: "Main Events & Holidays — Serendib" },
+      { property: "og:title", content: "Main Events & Holidays — Visit Sri Lanka" },
       {
         property: "og:description",
         content:
