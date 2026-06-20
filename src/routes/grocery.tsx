@@ -283,8 +283,16 @@ function Grocery() {
               <span className="text-muted-foreground">Delivery</span>
               <span className="font-semibold">Rs. {deliveryFee}</span>
             </div>
+            <div className="mt-2 flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Payment</span>
+              <span className="font-semibold">
+                {payment === "card" ? "Card" : "Cash on delivery"}
+              </span>
+            </div>
             <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3 text-base">
-              <span className="font-semibold">Total paid</span>
+              <span className="font-semibold">
+                {payment === "cod" ? "Pay on arrival" : "Total paid"}
+              </span>
               <span className="font-bold text-primary">Rs. {total.toLocaleString()}</span>
             </div>
           </div>
