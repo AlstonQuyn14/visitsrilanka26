@@ -7,7 +7,8 @@ import {
   MapPin,
   Users,
   ShieldCheck,
-  Smartphone,
+  Loader2,
+  CheckCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,27 +34,29 @@ export const Route = createFileRoute("/notifications")({
   component: Notifications,
 });
 
-type Tab = "All" | "Login" | "Tracking" | "Group";
+type Category = "login" | "tracking" | "group";
+type Tab = "All" | Category;
 
-interface Note {
+interface NotificationRow {
   id: string;
-  tab: Exclude<Tab, "All">;
-  icon: typeof LogIn;
+  category: Category;
   title: string;
-  detail: string;
-  time: string;
-  tone: "primary" | "accent" | "nature" | "sun";
+  detail: string | null;
+  is_read: boolean;
+  created_at: string;
 }
 
-const toneClasses: Record<Note["tone"], string> = {
-  primary: "bg-primary/10 text-primary",
-  accent: "bg-accent/10 text-accent",
-  nature: "bg-chart-3/10 text-chart-3",
-  sun: "bg-chart-4/15 text-chart-4",
+const categoryMeta: Record<
+  Category,
+  { icon: typeof LogIn; tone: string }
+> = {
+  login: { icon: LogIn, tone: "bg-primary/10 text-primary" },
+  tracking: { icon: MapPin, tone: "bg-accent/10 text-accent" },
+  group: { icon: Users, tone: "bg-chart-4/15 text-chart-4" },
 };
 
-function relativeTime(date: Date) {
-  const diff = Date.now() - date.getTime();
+function relativeTime(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.round(diff / 60000);
   if (mins < 1) return "Just now";
   if (mins < 60) return `${mins} min ago`;
@@ -65,115 +68,108 @@ function relativeTime(date: Date) {
 
 function Notifications() {
   const [active, setActive] = useState<Tab>("All");
-  const [lastLogin, setLastLogin] = useState<string>("Recently");
+  const [rows, setRows] = useState<NotificationRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [signedIn, setSignedIn] = useState(true);
 
   useEffect(() => {
     let on = true;
-    supabase.auth.getUser().then(({ data }) => {
-      const at = data.user?.last_sign_in_at;
-      if (on && at) setLastLogin(relativeTime(new Date(at)));
-    });
+
+    async function load() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!on) return;
+      if (!user) {
+        setSignedIn(false);
+        setLoading(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("notifications")
+        .select("id, category, title, detail, is_read, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (!on) return;
+      setRows((data as NotificationRow[]) ?? []);
+      setLoading(false);
+
+      // Live updates via realtime
+      const channel = supabase
+        .channel("notifications-feed")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            setRows((prev) => [payload.new as NotificationRow, ...prev]);
+          },
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const updated = payload.new as NotificationRow;
+            setRows((prev) =>
+              prev.map((r) => (r.id === updated.id ? updated : r)),
+            );
+          },
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+
+    const cleanup = load();
     return () => {
       on = false;
+      void cleanup.then((fn) => fn?.());
     };
   }, []);
 
-  const notes = useMemo<Note[]>(
-    () => [
-      {
-        id: "login-current",
-        tab: "Login",
-        icon: LogIn,
-        title: "New sign-in on this device",
-        detail: "Chrome · Colombo, Sri Lanka",
-        time: lastLogin,
-        tone: "primary",
-      },
-      {
-        id: "login-device",
-        tab: "Login",
-        icon: Smartphone,
-        title: "Login from iPhone",
-        detail: "Safari · Galle · Approved by you",
-        time: "Yesterday",
-        tone: "primary",
-      },
-      {
-        id: "login-secure",
-        tab: "Login",
-        icon: ShieldCheck,
-        title: "Password verified",
-        detail: "Your account security check passed",
-        time: "2 days ago",
-        tone: "nature",
-      },
-      {
-        id: "track-live",
-        tab: "Tracking",
-        icon: MapPin,
-        title: "Live vehicle tracking started",
-        detail: "Tuk Tuk · Ella → Nine Arch Bridge · ETA 18 min",
-        time: "5 min ago",
-        tone: "accent",
-      },
-      {
-        id: "track-arrived",
-        tab: "Tracking",
-        icon: MapPin,
-        title: "You're almost there",
-        detail: "200 m from your destination",
-        time: "12 min ago",
-        tone: "accent",
-      },
-      {
-        id: "track-share",
-        tab: "Tracking",
-        icon: ShieldCheck,
-        title: "Trip shared with emergency contact",
-        detail: "Live location link sent successfully",
-        time: "20 min ago",
-        tone: "nature",
-      },
-      {
-        id: "group-join",
-        tab: "Group",
-        icon: Users,
-        title: "Aisha joined your group trip",
-        detail: "South Coast Adventure · 4 members now",
-        time: "1 hr ago",
-        tone: "sun",
-      },
-      {
-        id: "group-expense",
-        tab: "Group",
-        icon: Users,
-        title: "New shared expense added",
-        detail: "Dinner in Galle · LKR 8,400 split 4 ways",
-        time: "3 hr ago",
-        tone: "sun",
-      },
-      {
-        id: "group-location",
-        tab: "Group",
-        icon: MapPin,
-        title: "Sahan shared live location",
-        detail: "Group members can now see the map",
-        time: "Yesterday",
-        tone: "accent",
-      },
-    ],
-    [lastLogin],
+  const filtered = useMemo(
+    () => (active === "All" ? rows : rows.filter((r) => r.category === active)),
+    [active, rows],
   );
+
+  const unread = rows.filter((r) => !r.is_read);
+
+  async function markAllRead() {
+    if (unread.length === 0) return;
+    setRows((prev) => prev.map((r) => ({ ...r, is_read: true })));
+    await supabase
+      .from("notifications")
+      .update({ is_read: true })
+      .in(
+        "id",
+        unread.map((r) => r.id),
+      );
+  }
 
   const tabs: { label: Tab; icon: typeof Bell }[] = [
     { label: "All", icon: Bell },
-    { label: "Login", icon: LogIn },
-    { label: "Tracking", icon: MapPin },
-    { label: "Group", icon: Users },
+    { label: "login", icon: LogIn },
+    { label: "tracking", icon: MapPin },
+    { label: "group", icon: Users },
   ];
 
-  const filtered =
-    active === "All" ? notes : notes.filter((n) => n.tab === active);
+  const tabLabel: Record<Tab, string> = {
+    All: "All",
+    login: "Login",
+    tracking: "Tracking",
+    group: "Group",
+  };
 
   return (
     <AppShell>
@@ -185,10 +181,32 @@ function Notifications() {
           <ChevronLeft className="h-4 w-4" />
           Home
         </Link>
-        <p className="text-xs font-medium text-accent">Notifications</p>
-        <h1 className="mt-0.5 text-2xl font-bold text-foreground">
-          What's happening
-        </h1>
+        <div className="flex items-end justify-between">
+          <div>
+            <p className="flex items-center gap-1.5 text-xs font-medium text-accent">
+              Notifications
+              <span className="flex items-center gap-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                </span>
+                Live
+              </span>
+            </p>
+            <h1 className="mt-0.5 text-2xl font-bold text-foreground">
+              What's happening
+            </h1>
+          </div>
+          {unread.length > 0 && (
+            <button
+              onClick={markAllRead}
+              className="flex items-center gap-1 text-xs font-semibold text-primary"
+            >
+              <CheckCheck className="h-4 w-4" />
+              Mark read
+            </button>
+          )}
+        </div>
       </header>
 
       <section className="mt-4">
@@ -207,7 +225,7 @@ function Notifications() {
                 )}
               >
                 <t.icon className="h-4 w-4" />
-                {t.label}
+                {tabLabel[t.label]}
               </button>
             );
           })}
@@ -215,30 +233,82 @@ function Notifications() {
       </section>
 
       <section className="mt-5 space-y-3 px-5">
-        {filtered.map((n) => (
-          <article
-            key={n.id}
-            className="flex gap-3 rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm"
-          >
-            <span
-              className={cn(
-                "grid h-10 w-10 shrink-0 place-items-center rounded-xl",
-                toneClasses[n.tone],
-              )}
+        {loading ? (
+          <div className="grid place-items-center py-16 text-muted-foreground">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : !signedIn ? (
+          <div className="grid place-items-center rounded-3xl border border-dashed border-border py-12 text-center">
+            <p className="text-sm font-medium text-foreground">
+              Sign in to see your notifications
+            </p>
+            <Link
+              to="/auth"
+              className="mt-3 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
-              <n.icon className="h-5 w-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="text-sm font-bold text-foreground">{n.title}</h3>
-                <span className="shrink-0 text-[11px] text-muted-foreground">
-                  {n.time}
+              Sign in
+            </Link>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="grid place-items-center rounded-3xl border border-dashed border-border py-12 text-center">
+            <Bell className="h-7 w-7 text-muted-foreground" />
+            <p className="mt-2 text-sm font-medium text-foreground">
+              No notifications yet
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Sign-ins, live tracking and group trip updates will appear here.
+            </p>
+          </div>
+        ) : (
+          filtered.map((n) => {
+            const meta = categoryMeta[n.category];
+            const Icon = meta.icon;
+            return (
+              <article
+                key={n.id}
+                className={cn(
+                  "flex gap-3 rounded-2xl border p-3.5 shadow-sm transition-colors",
+                  n.is_read
+                    ? "border-border/60 bg-card"
+                    : "border-primary/30 bg-primary/[0.04]",
+                )}
+              >
+                <span
+                  className={cn(
+                    "grid h-10 w-10 shrink-0 place-items-center rounded-xl",
+                    meta.tone,
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
                 </span>
-              </div>
-              <p className="mt-0.5 text-xs text-muted-foreground">{n.detail}</p>
-            </div>
-          </article>
-        ))}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-foreground">
+                      {n.title}
+                    </h3>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                      {relativeTime(n.created_at)}
+                    </span>
+                  </div>
+                  {n.detail && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {n.detail}
+                    </p>
+                  )}
+                </div>
+                {!n.is_read && (
+                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
+                )}
+              </article>
+            );
+          })
+        )}
+        {!loading && signedIn && filtered.length > 0 && (
+          <p className="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-muted-foreground">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Updates stream in live as they happen
+          </p>
+        )}
       </section>
     </AppShell>
   );
