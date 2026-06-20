@@ -570,18 +570,11 @@ function Safety() {
                     className="w-full bg-transparent text-sm outline-none"
                   />
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5">
-                  <Clock className="h-4 w-4 shrink-0 text-chart-3" />
-                  <input
-                    value={form.duration}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, duration: e.target.value.replace(/[^\d]/g, "") }))
-                    }
-                    inputMode="numeric"
-                    placeholder="Estimated trip time (minutes)"
-                    className="w-full bg-transparent text-sm outline-none"
-                  />
-                </div>
+                <p className="flex items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
+                  <LocateFixed className="h-3.5 w-3.5 text-primary" />
+                  Distance &amp; ETA update live from your phone's GPS.
+                </p>
+
 
                 <button
                   onClick={addRide}
