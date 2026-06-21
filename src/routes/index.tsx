@@ -93,7 +93,7 @@ function Home() {
             </button>
           ))}
         </div>
-        <div class="grid grid-cols-2 gap-3 px-5">
+        <div className="grid grid-cols-2 gap-3 px-5">
           {filteredActivities.map((a) => (
             <article
               key={a.id}
