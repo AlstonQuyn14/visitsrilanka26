@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   ChevronLeft,
@@ -22,6 +22,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { createGuide } from "@/lib/guides.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/guides/register")({
@@ -64,8 +65,24 @@ function RegisterGuide() {
   const queryClient = useQueryClient();
   const submitGuide = useServerFn(createGuide);
 
+  const [authed, setAuthed] = useState<boolean | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setAuthed(!!data.user);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAuthed(!!session?.user);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
 
   const [name, setName] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
@@ -141,6 +158,38 @@ function RegisterGuide() {
 
   function removeCert(cert: string) {
     setCertifications(certifications.filter((c) => c !== cert));
+  }
+
+  if (authed === false) {
+    return (
+      <AppShell>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+          <span className="grid h-20 w-20 place-items-center rounded-full bg-primary/10 text-primary">
+            <User className="h-10 w-10" />
+          </span>
+          <h1 className="mt-5 text-2xl font-bold text-foreground">Sign in to continue</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You need an account to register as a guide. This keeps our guide
+            network trusted and spam-free.
+          </p>
+          <div className="mt-6 flex w-full flex-col gap-2">
+            <Link
+              to="/auth"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-sm"
+            >
+              <BadgeCheck className="h-4 w-4" />
+              Sign in
+            </Link>
+            <Link
+              to="/guides"
+              className="w-full rounded-2xl border border-border/60 py-3.5 text-sm font-semibold text-foreground"
+            >
+              Back to Guides
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    );
   }
 
   if (submitted) {
