@@ -79,6 +79,54 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount_cents: number
+          cause_id: string
+          cause_name: string
+          created_at: string
+          currency: string
+          donor_email: string | null
+          donor_name: string | null
+          environment: string
+          id: string
+          paddle_transaction_id: string | null
+          receipt_sent: boolean
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          cause_id: string
+          cause_name: string
+          created_at?: string
+          currency?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          environment?: string
+          id?: string
+          paddle_transaction_id?: string | null
+          receipt_sent?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          cause_id?: string
+          cause_name?: string
+          created_at?: string
+          currency?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          environment?: string
+          id?: string
+          paddle_transaction_id?: string | null
+          receipt_sent?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       guides: {
         Row: {
           bio: string | null
