@@ -5,6 +5,25 @@ import destKandy from "@/assets/dest-kandy.jpg";
 import destGalle from "@/assets/dest-galle.jpg";
 import destYala from "@/assets/dest-yala.jpg";
 
+import actBadminton from "@/assets/activities/badminton.jpg";
+import actTennis from "@/assets/activities/tennis.jpg";
+import actSurfing from "@/assets/activities/surfing.jpg";
+import actSnorkeling from "@/assets/activities/snorkeling.jpg";
+import actWhale from "@/assets/activities/whale-watching.jpg";
+import actSafari from "@/assets/activities/safari.jpg";
+import actHiking from "@/assets/activities/hiking.jpg";
+import actCycling from "@/assets/activities/cycling.jpg";
+import actTea from "@/assets/activities/tea-tasting.jpg";
+import actCooking from "@/assets/activities/cooking-class.jpg";
+import actYoga from "@/assets/activities/yoga.jpg";
+import actWhiteWater from "@/assets/activities/white-water.jpg";
+import actBalloon from "@/assets/activities/hot-air-balloon.jpg";
+import actGolf from "@/assets/activities/golf.jpg";
+import actKite from "@/assets/activities/kitesurfing.jpg";
+import actTrain from "@/assets/activities/train-ride.jpg";
+import actPaddle from "@/assets/activities/stand-up-paddle.jpg";
+import actSpa from "@/assets/activities/spa.jpg";
+
 export type PlaceCategory =
   | "Beaches"
   | "Historical"
