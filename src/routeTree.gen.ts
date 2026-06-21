@@ -24,6 +24,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
+import { Route as DonationSuccessRouteImport } from './routes/donation.success'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -106,6 +107,11 @@ const GuidesRegisterRoute = GuidesRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => GuidesRoute,
 } as any)
+const DonationSuccessRoute = DonationSuccessRouteImport.update({
+  id: '/donation/success',
+  path: '/donation/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
   id: '/api/transcribe',
   path: '/api/transcribe',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
   '/planner/': typeof AuthenticatedPlannerIndexRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
   '/planner': typeof AuthenticatedPlannerIndexRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/_authenticated/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
   '/_authenticated/planner/': typeof AuthenticatedPlannerIndexRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/donation/success'
     | '/guides/register'
     | '/planner/$threadId'
     | '/planner/'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/donation/success'
     | '/guides/register'
     | '/planner/$threadId'
     | '/planner'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/donation/success'
     | '/guides/register'
     | '/_authenticated/planner/$threadId'
     | '/_authenticated/planner/'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSpeakRoute: typeof ApiSpeakRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  DonationSuccessRoute: typeof DonationSuccessRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -417,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesRegisterRouteImport
       parentRoute: typeof GuidesRoute
     }
+    '/donation/success': {
+      id: '/donation/success'
+      path: '/donation/success'
+      fullPath: '/donation/success'
+      preLoaderRoute: typeof DonationSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/transcribe': {
       id: '/api/transcribe'
       path: '/api/transcribe'
@@ -513,6 +533,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSpeakRoute: ApiSpeakRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  DonationSuccessRoute: DonationSuccessRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
