@@ -65,8 +65,24 @@ function RegisterGuide() {
   const queryClient = useQueryClient();
   const submitGuide = useServerFn(createGuide);
 
+  const [authed, setAuthed] = useState<boolean | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setAuthed(!!data.user);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAuthed(!!session?.user);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
 
   const [name, setName] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
