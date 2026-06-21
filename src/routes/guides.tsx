@@ -162,19 +162,13 @@ function Guides() {
         )}
       </div>
 
-      {/* Results count + Become a Guide CTA */}
+      {/* Results count */}
       <div className="mt-4 flex items-center justify-between px-5">
         <p className="text-xs text-muted-foreground">
           {isLoading ? "Loading guides..." : `${filtered.length} guide${filtered.length !== 1 ? "s" : ""} found`}
         </p>
-        <Link
-          to="/guides/register"
-          className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Become a Guide
-        </Link>
       </div>
+
 
       {/* Guide Cards */}
       <div className="mt-3 space-y-3 px-5 pb-8">
