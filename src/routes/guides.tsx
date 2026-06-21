@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Star,
   MapPin,
@@ -12,13 +12,16 @@ import {
   Compass,
   X,
   CalendarCheck,
+  Lock,
+  Loader2,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { CheckoutSheet } from "@/components/CheckoutSheet";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { getGuides } from "@/lib/guides.functions";
+import { getGuides, getGuideContact } from "@/lib/guides.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 // Guide rates are stored in Sri Lankan Rupees; checkout charges in USD.
