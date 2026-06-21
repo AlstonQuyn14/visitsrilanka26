@@ -22,6 +22,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { createGuide } from "@/lib/guides.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/guides/register")({
