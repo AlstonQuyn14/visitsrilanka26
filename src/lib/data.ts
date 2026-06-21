@@ -204,31 +204,33 @@ export interface Activity {
   id: string;
   name: string;
   emoji: string;
+  image: string;
   category: string;
   region: string;
   tagline: string;
 }
 
 export const activities: Activity[] = [
-  { id: "badminton", name: "Badminton", emoji: "🏸", category: "Sport", region: "Colombo & resorts", tagline: "Indoor courts & friendly local clubs" },
-  { id: "tennis", name: "Tennis", emoji: "🎾", category: "Sport", region: "Nuwara Eliya & Colombo", tagline: "Colonial-era clay & hotel courts" },
-  { id: "surfing", name: "Surfing", emoji: "🏄", category: "Water", region: "Arugam Bay & Weligama", tagline: "World-class breaks for all levels" },
-  { id: "snorkeling", name: "Snorkeling & Diving", emoji: "🤿", category: "Water", region: "Pigeon Island & Hikkaduwa", tagline: "Coral reefs, turtles & shipwrecks" },
-  { id: "whale-watching", name: "Whale Watching", emoji: "🐋", category: "Water", region: "Mirissa & Trincomalee", tagline: "Blue whales & dolphin pods" },
-  { id: "safari", name: "Wildlife Safari", emoji: "🐘", category: "Nature", region: "Yala & Udawalawe", tagline: "Leopards, elephants & jeep tours" },
-  { id: "hiking", name: "Hiking & Trekking", emoji: "🥾", category: "Adventure", region: "Ella & Knuckles", tagline: "Peaks, plains & waterfall trails" },
-  { id: "cycling", name: "Cycling Tours", emoji: "🚴", category: "Adventure", region: "Anuradhapura & Sigiriya", tagline: "Ride past ruins & paddy fields" },
-  { id: "tea-tasting", name: "Tea Plantation Tours", emoji: "🍵", category: "Culture", region: "Ella & Nuwara Eliya", tagline: "Estate walks & fresh Ceylon brews" },
-  { id: "cooking-class", name: "Cooking Classes", emoji: "🍛", category: "Culture", region: "Galle & Kandy", tagline: "Master curries, hoppers & spices" },
-  { id: "yoga", name: "Yoga & Wellness", emoji: "🧘", category: "Wellness", region: "Mirissa & Hiriketiya", tagline: "Beachfront retreats & Ayurveda" },
-  { id: "white-water", name: "White Water Rafting", emoji: "🛶", category: "Adventure", region: "Kitulgala", tagline: "Rapids through the rainforest" },
-  { id: "hot-air-balloon", name: "Hot Air Ballooning", emoji: "🎈", category: "Adventure", region: "Dambulla & Sigiriya", tagline: "Sunrise flights over the plains" },
-  { id: "golf", name: "Golf", emoji: "⛳", category: "Sport", region: "Nuwara Eliya & Colombo", tagline: "Scenic highland & city courses" },
-  { id: "kitesurfing", name: "Kitesurfing", emoji: "🪁", category: "Water", region: "Kalpitiya", tagline: "Steady winds & flat lagoons" },
-  { id: "train-ride", name: "Scenic Train Rides", emoji: "🚂", category: "Culture", region: "Kandy to Ella", tagline: "The world's prettiest rail journey" },
-  { id: "stand-up-paddle", name: "Stand-Up Paddle", emoji: "🏄‍♀️", category: "Water", region: "Bentota & Weligama", tagline: "Calm rivers, lagoons & sunsets" },
-  { id: "spa", name: "Ayurveda Spa", emoji: "💆", category: "Wellness", region: "Bentota & Beruwala", tagline: "Traditional herbal treatments" },
+  { id: "badminton", name: "Badminton", emoji: "🏸", image: actBadminton, category: "Sport", region: "Colombo & resorts", tagline: "Indoor courts & friendly local clubs" },
+  { id: "tennis", name: "Tennis", emoji: "🎾", image: actTennis, category: "Sport", region: "Nuwara Eliya & Colombo", tagline: "Colonial-era clay & hotel courts" },
+  { id: "surfing", name: "Surfing", emoji: "🏄", image: actSurfing, category: "Water", region: "Arugam Bay & Weligama", tagline: "World-class breaks for all levels" },
+  { id: "snorkeling", name: "Snorkeling & Diving", emoji: "🤿", image: actSnorkeling, category: "Water", region: "Pigeon Island & Hikkaduwa", tagline: "Coral reefs, turtles & shipwrecks" },
+  { id: "whale-watching", name: "Whale Watching", emoji: "🐋", image: actWhale, category: "Water", region: "Mirissa & Trincomalee", tagline: "Blue whales & dolphin pods" },
+  { id: "safari", name: "Wildlife Safari", emoji: "🐘", image: actSafari, category: "Nature", region: "Yala & Udawalawe", tagline: "Leopards, elephants & jeep tours" },
+  { id: "hiking", name: "Hiking & Trekking", emoji: "🥾", image: actHiking, category: "Adventure", region: "Ella & Knuckles", tagline: "Peaks, plains & waterfall trails" },
+  { id: "cycling", name: "Cycling Tours", emoji: "🚴", image: actCycling, category: "Adventure", region: "Anuradhapura & Sigiriya", tagline: "Ride past ruins & paddy fields" },
+  { id: "tea-tasting", name: "Tea Plantation Tours", emoji: "🍵", image: actTea, category: "Culture", region: "Ella & Nuwara Eliya", tagline: "Estate walks & fresh Ceylon brews" },
+  { id: "cooking-class", name: "Cooking Classes", emoji: "🍛", image: actCooking, category: "Culture", region: "Galle & Kandy", tagline: "Master curries, hoppers & spices" },
+  { id: "yoga", name: "Yoga & Wellness", emoji: "🧘", image: actYoga, category: "Wellness", region: "Mirissa & Hiriketiya", tagline: "Beachfront retreats & Ayurveda" },
+  { id: "white-water", name: "White Water Rafting", emoji: "🛶", image: actWhiteWater, category: "Adventure", region: "Kitulgala", tagline: "Rapids through the rainforest" },
+  { id: "hot-air-balloon", name: "Hot Air Ballooning", emoji: "🎈", image: actBalloon, category: "Adventure", region: "Dambulla & Sigiriya", tagline: "Sunrise flights over the plains" },
+  { id: "golf", name: "Golf", emoji: "⛳", image: actGolf, category: "Sport", region: "Nuwara Eliya & Colombo", tagline: "Scenic highland & city courses" },
+  { id: "kitesurfing", name: "Kitesurfing", emoji: "🪁", image: actKite, category: "Water", region: "Kalpitiya", tagline: "Steady winds & flat lagoons" },
+  { id: "train-ride", name: "Scenic Train Rides", emoji: "🚂", image: actTrain, category: "Culture", region: "Kandy to Ella", tagline: "The world's prettiest rail journey" },
+  { id: "stand-up-paddle", name: "Stand-Up Paddle", emoji: "🏄‍♀️", image: actPaddle, category: "Water", region: "Bentota & Weligama", tagline: "Calm rivers, lagoons & sunsets" },
+  { id: "spa", name: "Ayurveda Spa", emoji: "💆", image: actSpa, category: "Wellness", region: "Bentota & Beruwala", tagline: "Traditional herbal treatments" },
 ];
+
 
 
 export interface QuickAction {
