@@ -25,6 +25,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
 import { Route as DonationSuccessRouteImport } from './routes/donation.success'
+import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -112,6 +113,11 @@ const DonationSuccessRoute = DonationSuccessRouteImport.update({
   path: '/donation/success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
   id: '/api/transcribe',
   path: '/api/transcribe',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/api/speak': typeof ApiSpeakRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/donation/success': typeof DonationSuccessRoute
   '/guides/register': typeof GuidesRegisterRoute
   '/_authenticated/planner/$threadId': typeof AuthenticatedPlannerThreadIdRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/checkout/success'
     | '/donation/success'
     | '/guides/register'
     | '/planner/$threadId'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/checkout/success'
     | '/donation/success'
     | '/guides/register'
     | '/planner/$threadId'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/speak'
     | '/api/transcribe'
+    | '/checkout/success'
     | '/donation/success'
     | '/guides/register'
     | '/_authenticated/planner/$threadId'
@@ -319,6 +331,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSpeakRoute: typeof ApiSpeakRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   DonationSuccessRoute: typeof DonationSuccessRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonationSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/success': {
+      id: '/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof CheckoutSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/transcribe': {
       id: '/api/transcribe'
       path: '/api/transcribe'
@@ -533,6 +553,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSpeakRoute: ApiSpeakRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  CheckoutSuccessRoute: CheckoutSuccessRoute,
   DonationSuccessRoute: DonationSuccessRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

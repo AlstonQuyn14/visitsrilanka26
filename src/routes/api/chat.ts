@@ -13,33 +13,63 @@ type ChatRequestBody = {
   language?: unknown;
 };
 
-async function verifyUser(request: Request): Promise<boolean> {
+async function getUserId(request: Request): Promise<string | null> {
   const authHeader = request.headers.get("authorization");
-  if (!authHeader?.startsWith("Bearer ")) return false;
+  if (!authHeader?.startsWith("Bearer ")) return null;
   const token = authHeader.slice("Bearer ".length).trim();
-  if (!token) return false;
+  if (!token) return null;
 
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return false;
+  if (!url || !key) return null;
 
   const supabase = createClient(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
   });
   const { data, error } = await supabase.auth.getClaims(token);
-  return !error && !!data?.claims?.sub;
+  if (error) return null;
+  return (data?.claims?.sub as string | undefined) ?? null;
+}
+
+async function hasActiveSubscription(
+  userId: string,
+  environment: "sandbox" | "live",
+): Promise<boolean> {
+  const { supabaseAdmin } = await import(
+    "@/integrations/supabase/client.server"
+  );
+  const { data, error } = await supabaseAdmin.rpc("has_active_subscription", {
+    user_uuid: userId,
+    check_env: environment,
+  });
+  if (error) {
+    console.error("Subscription check failed:", error.message);
+    return false;
+  }
+  return data === true;
 }
 
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authed = await verifyUser(request);
-        if (!authed) {
+        const userId = await getUserId(request);
+        if (!userId) {
           return new Response("Unauthorized", { status: 401 });
         }
 
         const body = (await request.json()) as ChatRequestBody;
+
+        const environment =
+          (body as any).environment === "live" ? "live" : "sandbox";
+        const subscribed = await hasActiveSubscription(userId, environment);
+        if (!subscribed) {
+          return new Response(
+            "An active AI Travel Assistant Pro subscription is required.",
+            { status: 402 },
+          );
+        }
+
         const { messages } = body;
         if (!Array.isArray(messages)) {
           return new Response("Messages are required", { status: 400 });

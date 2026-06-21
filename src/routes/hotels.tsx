@@ -1,9 +1,15 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { BedDouble, Phone, MapPin, Star } from "lucide-react";
+import { BedDouble, Phone, MapPin, Star, CalendarCheck } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
-import { hotels, hotelCategories, type HotelCategory } from "@/lib/data";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { CheckoutSheet } from "@/components/CheckoutSheet";
+import { hotels, hotelCategories, type Hotel, type HotelCategory } from "@/lib/data";
 import { cn } from "@/lib/utils";
+
+function priceNumber(priceFrom: string): number {
+  return Number(priceFrom.replace(/[^0-9.]/g, "")) || 0;
+}
 
 export const Route = createFileRoute("/hotels")({
   head: () => ({
@@ -27,6 +33,7 @@ export const Route = createFileRoute("/hotels")({
 
 function Hotels() {
   const [active, setActive] = useState<HotelCategory | "All">("All");
+  const [booking, setBooking] = useState<Hotel | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -38,6 +45,7 @@ function Hotels() {
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <header className="px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <p className="flex items-center gap-1.5 text-xs font-medium text-accent">
           <BedDouble className="h-4 w-4" />
@@ -121,15 +129,36 @@ function Hotels() {
               </div>
               <a
                 href={`tel:${hotel.hotline.replace(/\s+/g, "")}`}
-                className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-transform active:scale-95"
+                className="flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3 py-2 text-xs font-semibold text-foreground transition-transform active:scale-95"
               >
                 <Phone className="h-3.5 w-3.5" />
-                {hotel.hotline}
+                Call
               </a>
             </div>
+
+            <button
+              onClick={() => setBooking(hotel)}
+              className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-primary py-2.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-95"
+            >
+              <CalendarCheck className="h-4 w-4" />
+              Book 1 night · {hotel.priceFrom.replace(/\s*\/\s*night/i, "")}
+            </button>
           </article>
         ))}
       </section>
+
+      {booking && (
+        <CheckoutSheet
+          orderType="hotel"
+          itemId={booking.id}
+          itemName={booking.name}
+          amountUsd={priceNumber(booking.priceFrom)}
+          emoji={booking.emoji}
+          subtitle={`${booking.location} · 1 night`}
+          extra={{ nights: "1", location: booking.location }}
+          onClose={() => setBooking(null)}
+        />
+      )}
     </AppShell>
   );
 }

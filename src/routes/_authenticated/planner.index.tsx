@@ -7,9 +7,16 @@ import {
   Trash2,
   Loader2,
   Globe,
+  Sparkles,
+  Lock,
+  Check,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Button } from "@/components/ui/button";
+import { useSubscription } from "@/hooks/useSubscription";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { supabase } from "@/integrations/supabase/client";
 import { agentList, agents, type AgentId } from "@/lib/ai-agents";
 import {
   listThreads,
@@ -49,6 +56,29 @@ function PlannerHub() {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState<AgentId | null>(null);
+  const { isActive, loading: subLoading, userId } = useSubscription();
+  const { openCheckout } = usePaddleCheckout();
+  const [subscribing, setSubscribing] = useState(false);
+
+  async function subscribe() {
+    setSubscribing(true);
+    try {
+      const { data } = await supabase.auth.getUser();
+      await openCheckout({
+        priceId: "ai_assistant_monthly",
+        quantity: 1,
+        customerEmail: data.user?.email ?? undefined,
+        customData: {
+          kind: "subscription",
+          ...(userId ? { userId } : {}),
+        },
+        successUrl: `${window.location.origin}/planner`,
+      });
+    } finally {
+      setSubscribing(false);
+    }
+  }
+
 
   const refresh = useCallback(async () => {
     try {
@@ -66,6 +96,7 @@ function PlannerHub() {
 
   const startChat = useCallback(
     async (agent: AgentId) => {
+      if (!isActive) return;
       setCreating(agent);
       try {
         const thread = await createThread(agent);
@@ -77,7 +108,7 @@ function PlannerHub() {
         setCreating(null);
       }
     },
-    [navigate],
+    [navigate, isActive],
   );
 
   const remove = useCallback(
@@ -94,6 +125,7 @@ function PlannerHub() {
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border/60 bg-background/90 px-4 py-3 backdrop-blur-xl">
         <Link
           to="/"
@@ -113,12 +145,48 @@ function PlannerHub() {
       </header>
 
       <div className="space-y-6 px-4 py-5">
+        {!subLoading && !isActive && (
+          <section className="overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 p-5">
+            <div className="flex items-center gap-2 text-primary">
+              <Sparkles className="h-5 w-5" />
+              <h2 className="text-sm font-bold">AI Travel Assistant Pro</h2>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Unlock unlimited chats with your AI travel planner and Q&A guide —
+              multi-day itineraries, local tips and culture, in 15+ languages.
+            </p>
+            <ul className="mt-3 space-y-1.5 text-xs text-foreground">
+              <li className="flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-primary" /> Unlimited AI conversations
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-primary" /> Personalised itineraries
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-3.5 w-3.5 text-primary" /> Cancel anytime
+              </li>
+            </ul>
+            <button
+              onClick={subscribe}
+              disabled={subscribing}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+            >
+              {subscribing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              Subscribe · $4.99/mo
+            </button>
+          </section>
+        )}
+
         <section className="space-y-3">
           {agentList.map((agent) => (
             <button
               key={agent.id}
               onClick={() => startChat(agent.id)}
-              disabled={creating !== null}
+              disabled={creating !== null || !isActive}
               className={cn(
                 "group flex w-full items-center gap-3 rounded-3xl bg-gradient-to-br p-4 text-left text-primary-foreground shadow-lg transition-transform active:scale-[0.98] disabled:opacity-70",
                 agent.gradient,
@@ -136,6 +204,8 @@ function PlannerHub() {
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/25">
                 {creating === agent.id ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
+                ) : !isActive ? (
+                  <Lock className="h-4 w-4" />
                 ) : (
                   <Plus className="h-5 w-5" />
                 )}
