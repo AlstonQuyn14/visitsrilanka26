@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
+let _supabase: ReturnType<typeof createClient<any>> | null = null;
 function getSupabase() {
   if (!_supabase) {
-    _supabase = createClient(
+    _supabase = createClient<any>(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
@@ -24,7 +24,7 @@ async function sendDonationReceipt(params: {
   email: string;
   donorName?: string;
   causeName: string;
-  amountФormatted: string;
+  amountFormatted: string;
   transactionId: string;
 }) {
   // Best-effort branded receipt via Lovable Emails. Safe no-op until email
@@ -80,7 +80,7 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
       email: donorEmail,
       donorName: donorName ?? undefined,
       causeName,
-      amountФormatted: centsToAmountString(amountCents, currency),
+      amountFormatted: centsToAmountString(amountCents, currency),
       transactionId: data.id,
     });
     if (sent) {
