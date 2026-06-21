@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Star,
   MapPin,
@@ -8,17 +8,24 @@ import {
   BadgeCheck,
   Search,
   SlidersHorizontal,
-  Plus,
   Globe,
   Compass,
   X,
-  ChevronRight,
+  CalendarCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { CheckoutSheet } from "@/components/CheckoutSheet";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getGuides } from "@/lib/guides.functions";
 import { cn } from "@/lib/utils";
+
+// Guide rates are stored in Sri Lankan Rupees; checkout charges in USD.
+const LKR_PER_USD = 300;
+function lkrToUsd(lkr: number): number {
+  return Math.max(0.7, Math.round((lkr / LKR_PER_USD) * 100) / 100);
+}
 
 export const Route = createFileRoute("/guides")({
   head: () => ({
@@ -55,6 +62,7 @@ function Guides() {
   const [filterSpec, setFilterSpec] = useState<string | null>(null);
   const [filterLoc, setFilterLoc] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [booking, setBooking] = useState<any | null>(null);
 
   const filtered = guides.filter((g) => {
     const matchesSearch =
@@ -78,6 +86,7 @@ function Guides() {
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <header className="px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <p className="text-xs font-medium text-accent">Local Experts</p>
         <h1 className="mt-0.5 text-2xl font-bold text-foreground">Tour Guides</h1>
@@ -185,9 +194,29 @@ function Guides() {
             <p className="text-xs text-muted-foreground">Try adjusting your filters or search.</p>
           </div>
         ) : (
-          filtered.map((guide) => <GuideCard key={guide.id} guide={guide} />)
+          filtered.map((guide) => (
+            <GuideCard key={guide.id} guide={guide} onBook={setBooking} />
+          ))
         )}
       </div>
+
+      {booking && (
+        <CheckoutSheet
+          orderType="guide"
+          itemId={String(booking.id)}
+          itemName={`Guide: ${booking.name}`}
+          amountUsd={lkrToUsd(Number(booking.price_per_day) || 0)}
+          emoji="🧭"
+          accent="bg-accent/15 text-accent"
+          subtitle={`${booking.location} · 1 day`}
+          extra={{
+            days: "1",
+            location: booking.location,
+            priceLkr: String(booking.price_per_day ?? ""),
+          }}
+          onClose={() => setBooking(null)}
+        />
+      )}
     </AppShell>
   );
 }
@@ -237,7 +266,13 @@ function FilterGroup({
   );
 }
 
-function GuideCard({ guide }: { guide: any }) {
+function GuideCard({
+  guide,
+  onBook,
+}: {
+  guide: any;
+  onBook: (guide: any) => void;
+}) {
   const initials = guide.name
     .split(" ")
     .map((n: string) => n[0])
@@ -358,6 +393,14 @@ function GuideCard({ guide }: { guide: any }) {
           </a>
         )}
       </div>
+
+      <button
+        onClick={() => onBook(guide)}
+        className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-95"
+      >
+        <CalendarCheck className="h-4 w-4" />
+        Book guide · ${lkrToUsd(Number(guide.price_per_day) || 0).toLocaleString()}/day
+      </button>
     </div>
   );
 }

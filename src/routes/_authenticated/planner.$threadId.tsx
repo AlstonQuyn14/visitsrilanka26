@@ -9,6 +9,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { ArrowLeft, Loader2, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { AppShell } from "@/components/layout/AppShell";
 import {
   Conversation,
@@ -163,7 +164,9 @@ function ChatView({
       if (text.includes("429"))
         setErrorMsg("Too many requests — please wait a moment and try again.");
       else if (text.includes("402"))
-        setErrorMsg("AI credits are exhausted. Please add credits to continue.");
+        setErrorMsg(
+          "Your AI Travel Assistant Pro subscription is required to chat. Subscribe from the AI Assistant home screen to continue.",
+        );
       else setErrorMsg("Something went wrong. Please try again.");
     },
   });
@@ -207,7 +210,10 @@ function ChatView({
       const value = text.trim();
       if (!value || busy) return;
       setErrorMsg(null);
-      void sendMessage({ text: value }, { body: { agent, language } });
+      void sendMessage(
+        { text: value },
+        { body: { agent, language, environment: getPaddleEnvironment() } },
+      );
     },
     [busy, sendMessage, agent, language],
   );

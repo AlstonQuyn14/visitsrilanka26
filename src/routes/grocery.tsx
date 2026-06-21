@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ShoppingBag,
@@ -13,9 +13,19 @@ import {
   Phone,
   CreditCard,
   Banknote,
+  Loader2,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+
+// Grocery prices are in Sri Lankan Rupees; card checkout charges in USD.
+const LKR_PER_USD = 300;
+function lkrToUsd(lkr: number): number {
+  return Math.max(0.7, Math.round((lkr / LKR_PER_USD) * 100) / 100);
+}
 
 export const Route = createFileRoute("/grocery")({
   head: () => ({
@@ -226,6 +236,33 @@ function Grocery() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [placed, setPlaced] = useState(false);
   const [payment, setPayment] = useState<PaymentMethod>("card");
+  const [paying, setPaying] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const { openCheckout } = usePaddleCheckout();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setUserId(data.user.id);
+        if (data.user.email) setUserEmail(data.user.email);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      const name =
+        typeof e.data === "object" && e.data ? (e.data as any).name : undefined;
+      if (name === "checkout.completed") {
+        setPaying(false);
+        setPlaced(true);
+      }
+      if (name === "checkout.closed") setPaying(false);
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   const filtered = useMemo(() => {
     return items.filter((it) => {
@@ -260,6 +297,41 @@ function Grocery() {
     setActive("All");
     setQuery("");
   };
+
+  async function handleCheckout() {
+    if (!store) {
+      setStore(stores[0]);
+      return;
+    }
+    // Cash on delivery keeps the existing instant confirmation.
+    if (payment === "cod") {
+      setPlaced(true);
+      return;
+    }
+    setPaying(true);
+    try {
+      await openCheckout({
+        priceId: "grocery_order_unit",
+        quantity: Math.round(lkrToUsd(total) * 100),
+        customerEmail: userEmail || undefined,
+        customData: {
+          kind: "order",
+          orderType: "grocery",
+          itemId: store.id,
+          itemName: `Grocery order · ${store.name}`,
+          customerEmail: userEmail,
+          ...(userId ? { userId } : {}),
+          store: store.name,
+          items: String(cartCount),
+          totalLkr: String(total),
+        },
+        successUrl: `${window.location.origin}/checkout/success`,
+      });
+    } catch {
+      setPaying(false);
+    }
+  }
+
 
   if (placed) {
     return (
@@ -309,6 +381,7 @@ function Grocery() {
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <h1 className="sr-only">Groceries & Essentials</h1>
 
       {/* Header */}
@@ -555,23 +628,26 @@ function Grocery() {
       {cartCount > 0 && (
         <div className="pointer-events-none fixed inset-x-0 bottom-24 z-40 flex justify-center px-4">
           <button
-            onClick={() => {
-              if (!store) {
-                setStore(stores[0]);
-                return;
-              }
-              setPlaced(true);
-            }}
-            className="pointer-events-auto flex w-full max-w-md items-center justify-between rounded-2xl bg-primary px-5 py-3.5 text-primary-foreground shadow-lg transition-transform active:scale-95"
+            onClick={handleCheckout}
+            disabled={paying}
+            className="pointer-events-auto flex w-full max-w-md items-center justify-between rounded-2xl bg-primary px-5 py-3.5 text-primary-foreground shadow-lg transition-transform active:scale-95 disabled:opacity-60"
           >
             <span className="flex items-center gap-2 text-sm font-semibold">
               <span className="grid h-7 w-7 place-items-center rounded-full bg-primary-foreground/20">
-                <ShoppingCart className="h-4 w-4" />
+                {paying ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ShoppingCart className="h-4 w-4" />
+                )}
               </span>
               {cartCount} item{cartCount > 1 ? "s" : ""}
             </span>
             <span className="text-sm font-bold">
-              {store ? `Checkout · Rs. ${total.toLocaleString()}` : "Select store"}
+              {!store
+                ? "Select store"
+                : payment === "cod"
+                  ? `Place order · Rs. ${total.toLocaleString()}`
+                  : `Pay $${lkrToUsd(total).toLocaleString()}`}
             </span>
           </button>
         </div>
