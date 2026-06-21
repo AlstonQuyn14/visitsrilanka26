@@ -375,27 +375,9 @@ function GuideCard({
         )}
       </div>
 
-      {/* Contact buttons */}
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        {guide.contact_phone && (
-          <a
-            href={`tel:${guide.contact_phone}`}
-            className="flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2.5 text-xs font-semibold text-primary"
-          >
-            <Phone className="h-3.5 w-3.5" />
-            Call
-          </a>
-        )}
-        {guide.contact_email && (
-          <a
-            href={`mailto:${guide.contact_email}`}
-            className="flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-foreground"
-          >
-            <Mail className="h-3.5 w-3.5" />
-            Email
-          </a>
-        )}
-      </div>
+      {/* Contact details — only available to signed-in users */}
+      <GuideContact guideId={String(guide.id)} />
+
 
       <button
         onClick={() => onBook(guide)}
