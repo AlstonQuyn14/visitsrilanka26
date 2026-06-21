@@ -389,3 +389,90 @@ function GuideCard({
     </div>
   );
 }
+
+function GuideContact({ guideId }: { guideId: string }) {
+  const fetchContact = useServerFn(getGuideContact);
+  const [requested, setRequested] = useState(false);
+  const [needsAuth, setNeedsAuth] = useState(false);
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["guide-contact", guideId],
+    queryFn: () => fetchContact({ data: { id: guideId } }),
+    enabled: requested,
+    retry: false,
+  });
+
+  async function handleReveal() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setNeedsAuth(true);
+      return;
+    }
+    setNeedsAuth(false);
+    setRequested(true);
+  }
+
+  if (needsAuth) {
+    return (
+      <Link
+        to="/auth"
+        className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-foreground"
+      >
+        <Lock className="h-3.5 w-3.5" />
+        Sign in to view contact
+      </Link>
+    );
+  }
+
+  if (!requested) {
+    return (
+      <button
+        type="button"
+        onClick={handleReveal}
+        className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2.5 text-xs font-semibold text-primary"
+      >
+        <Phone className="h-3.5 w-3.5" />
+        Show contact details
+      </button>
+    );
+  }
+
+  if (isFetching) {
+    return (
+      <div className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-medium text-muted-foreground">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        Loading…
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-2">
+      {data?.contact_phone && (
+        <a
+          href={`tel:${data.contact_phone}`}
+          className="flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2.5 text-xs font-semibold text-primary"
+        >
+          <Phone className="h-3.5 w-3.5" />
+          Call
+        </a>
+      )}
+      {data?.contact_email && (
+        <a
+          href={`mailto:${data.contact_email}`}
+          className="flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-foreground"
+        >
+          <Mail className="h-3.5 w-3.5" />
+          Email
+        </a>
+      )}
+      {!data?.contact_phone && !data?.contact_email && (
+        <p className="col-span-2 text-center text-xs text-muted-foreground">
+          No contact details provided.
+        </p>
+      )}
+    </div>
+  );
+}
