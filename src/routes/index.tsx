@@ -93,29 +93,39 @@ function Home() {
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-2 gap-3 px-5">
+        <div class="grid grid-cols-2 gap-3 px-5">
           {filteredActivities.map((a) => (
             <article
               key={a.id}
-              className="flex flex-col gap-1.5 rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm"
+              className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-2xl">{a.emoji}</span>
-                <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground">
+              <div className="relative h-28 w-full">
+                <img
+                  src={a.image}
+                  alt={a.name}
+                  loading="lazy"
+                  width={640}
+                  height={512}
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute right-2 top-2 rounded-full bg-card/90 px-2 py-0.5 text-[10px] font-semibold text-foreground backdrop-blur">
                   {a.category}
                 </span>
               </div>
-              <h3 className="text-sm font-bold leading-tight text-foreground">
-                {a.name}
-              </h3>
-              <p className="text-xs text-muted-foreground">{a.tagline}</p>
-              <p className="mt-auto flex items-center gap-1 pt-1 text-[11px] font-medium text-accent">
-                <MapPin className="h-3 w-3" />
-                <span className="truncate">{a.region}</span>
-              </p>
+              <div className="flex flex-1 flex-col gap-1.5 p-3.5">
+                <h3 className="text-sm font-bold leading-tight text-foreground">
+                  {a.name}
+                </h3>
+                <p className="text-xs text-muted-foreground">{a.tagline}</p>
+                <p className="mt-auto flex items-center gap-1 pt-1 text-[11px] font-medium text-accent">
+                  <MapPin className="h-3 w-3" />
+                  <span className="truncate">{a.region}</span>
+                </p>
+              </div>
             </article>
           ))}
         </div>
+
       </section>
     </AppShell>
   );
