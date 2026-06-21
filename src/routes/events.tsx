@@ -103,6 +103,7 @@ function Events() {
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <header className="px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <p className="flex items-center gap-1.5 text-xs font-medium text-accent">
           <CalendarDays className="h-4 w-4" />
