@@ -87,7 +87,7 @@ const causes: Cause[] = [
   },
 ];
 
-const presetAmounts = [1000, 2500, 5000, 10000];
+const presetAmounts = [5, 10, 25, 50];
 
 function Events() {
   const [active, setActive] = useState<EventCategory | "All">("All");
