@@ -1,7 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, Heart, HandHeart, X, Check } from "lucide-react";
+import { CalendarDays, Heart, HandHeart, X, Check, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { supabase } from "@/integrations/supabase/client";
 import { sriLankaEvents, eventCategories, type EventCategory } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
