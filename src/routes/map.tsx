@@ -8,6 +8,8 @@ import {
   MapPin,
   Route as RouteIcon,
   Crosshair,
+  LocateFixed,
+  PersonStanding,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { iconicPlaces, sriLankaCenter, type IconicPlace } from "@/lib/data";
@@ -17,17 +19,17 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "Live Map — Visit Sri Lanka" },
+      { title: "Live Map & Street View — Visit Sri Lanka" },
       {
         name: "description",
         content:
-          "Explore an interactive 3D map of Sri Lanka, discover iconic landmarks and add waypoints to plan your route.",
+          "Track your real-time location on an interactive 3D map of Sri Lanka, explore Street View, discover iconic landmarks and plan your route.",
       },
-      { property: "og:title", content: "Live Map — Visit Sri Lanka" },
+      { property: "og:title", content: "Live Map & Street View — Visit Sri Lanka" },
       {
         property: "og:description",
         content:
-          "Interactive 3D map of Sri Lanka with iconic places and waypoint routing.",
+          "Real-time location, Street View and iconic places on an interactive map of Sri Lanka.",
       },
     ],
   }),
@@ -35,17 +37,25 @@ export const Route = createFileRoute("/map")({
 });
 
 type MapType = "hybrid" | "terrain" | "roadmap";
+type LatLng = { lat: number; lng: number };
 
 function MapPage() {
   const { loaded, error } = useGoogleMaps();
   const mapEl = useRef<HTMLDivElement>(null);
+  const panoEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
+  const panoRef = useRef<any>(null);
   const markersRef = useRef<Record<string, any>>({});
   const lineRef = useRef<any>(null);
+  const userMarkerRef = useRef<any>(null);
+  const userAccuracyRef = useRef<any>(null);
 
   const [mapType, setMapType] = useState<MapType>("hybrid");
   const [waypoints, setWaypoints] = useState<IconicPlace[]>([]);
   const [selected, setSelected] = useState<IconicPlace | null>(null);
+  const [userPos, setUserPos] = useState<LatLng | null>(null);
+  const [streetView, setStreetView] = useState(false);
+  const [streetViewError, setStreetViewError] = useState<string | null>(null);
 
   // Init map once API is ready
   useEffect(() => {
@@ -61,6 +71,7 @@ function MapPage() {
       disableDefaultUI: true,
       gestureHandling: "greedy",
       zoomControl: true,
+      streetViewControl: false,
     });
     mapRef.current = map;
 
@@ -90,6 +101,56 @@ function MapPage() {
       markersRef.current[place.id] = marker;
     });
   }, [loaded]);
+
+  // Watch the user's real-time location
+  useEffect(() => {
+    if (!loaded) return;
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      () => {
+        /* ignore — user may deny */
+      },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [loaded]);
+
+  // Render / update the live location marker
+  useEffect(() => {
+    const g = (window as unknown as Record<string, any>).google;
+    if (!mapRef.current || !g || !userPos) return;
+
+    if (!userMarkerRef.current) {
+      userAccuracyRef.current = new g.maps.Circle({
+        map: mapRef.current,
+        fillColor: "#2563eb",
+        fillOpacity: 0.12,
+        strokeColor: "#2563eb",
+        strokeOpacity: 0.25,
+        strokeWeight: 1,
+        radius: 120,
+      });
+      userMarkerRef.current = new g.maps.Marker({
+        map: mapRef.current,
+        title: "You are here",
+        zIndex: 999,
+        icon: {
+          path: g.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          fillColor: "#2563eb",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 3,
+        },
+      });
+    }
+    userMarkerRef.current.setPosition(userPos);
+    userAccuracyRef.current.setCenter(userPos);
+  }, [userPos]);
 
   // Update map type
   useEffect(() => {
@@ -148,6 +209,65 @@ function MapPage() {
     }
   };
 
+  const locateMe = () => {
+    if (!mapRef.current) return;
+    if (userPos) {
+      mapRef.current.panTo(userPos);
+      mapRef.current.setZoom(16);
+    }
+  };
+
+  // Open Street View for a given location, finding the nearest panorama.
+  const openStreetView = (location: LatLng) => {
+    const g = (window as unknown as Record<string, any>).google;
+    if (!g || !panoEl.current) return;
+    setStreetViewError(null);
+
+    const showPanorama = () => {
+      const svService = new g.maps.StreetViewService();
+      svService.getPanorama(
+        { location, radius: 200, source: "outdoor" },
+        (data: any, status: string) => {
+          if (status !== "OK" || !data?.location) {
+            setStreetViewError("No Street View imagery available here.");
+            return;
+          }
+          if (!panoRef.current) {
+            panoRef.current = new g.maps.StreetViewPanorama(panoEl.current, {
+              pov: { heading: 0, pitch: 0 },
+              zoom: 0,
+              addressControl: true,
+              fullscreenControl: false,
+              motionTracking: false,
+              motionTrackingControl: false,
+            });
+          }
+          panoRef.current.setPano(data.location.pano);
+          panoRef.current.setPov({ heading: 0, pitch: 0 });
+          panoRef.current.setVisible(true);
+        },
+      );
+    };
+
+    setStreetView(true);
+    // Defer so the panorama div is mounted before initialization.
+    requestAnimationFrame(showPanorama);
+  };
+
+  const handleStreetView = () => {
+    const target =
+      (selected && { lat: selected.lat, lng: selected.lng }) ||
+      userPos ||
+      sriLankaCenter;
+    openStreetView(target);
+  };
+
+  const closeStreetView = () => {
+    setStreetView(false);
+    setStreetViewError(null);
+    if (panoRef.current) panoRef.current.setVisible(false);
+  };
+
   return (
     <AppShell>
       <div className="relative h-[calc(100vh-7rem)]">
@@ -202,6 +322,26 @@ function MapPage() {
             <Layers className="h-5 w-5" />
           </button>
           <button
+            onClick={handleStreetView}
+            className="grid h-11 w-11 place-items-center rounded-2xl bg-card/95 text-foreground shadow-lg backdrop-blur"
+            aria-label="Open Street View"
+          >
+            <PersonStanding className="h-5 w-5" />
+          </button>
+          <button
+            onClick={locateMe}
+            disabled={!userPos}
+            className={cn(
+              "grid h-11 w-11 place-items-center rounded-2xl shadow-lg backdrop-blur transition-colors",
+              userPos
+                ? "bg-primary text-primary-foreground"
+                : "bg-card/95 text-muted-foreground/50",
+            )}
+            aria-label="Go to my location"
+          >
+            <LocateFixed className="h-5 w-5" />
+          </button>
+          <button
             onClick={recenter}
             className="grid h-11 w-11 place-items-center rounded-2xl bg-card/95 text-foreground shadow-lg backdrop-blur"
             aria-label="Recenter map"
@@ -234,20 +374,29 @@ function MapPage() {
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <button
-                onClick={() => toggleWaypoint(selected)}
-                className={cn(
-                  "mt-3 flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors",
-                  isWaypoint(selected.id)
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-primary text-primary-foreground",
-                )}
-              >
-                <Navigation className="h-4 w-4" />
-                {isWaypoint(selected.id)
-                  ? "Remove waypoint"
-                  : "Add as waypoint"}
-              </button>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => toggleWaypoint(selected)}
+                  className={cn(
+                    "flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors",
+                    isWaypoint(selected.id)
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-primary text-primary-foreground",
+                  )}
+                >
+                  <Navigation className="h-4 w-4" />
+                  {isWaypoint(selected.id) ? "Remove" : "Add waypoint"}
+                </button>
+                <button
+                  onClick={() =>
+                    openStreetView({ lat: selected.lat, lng: selected.lng })
+                  }
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm font-semibold text-secondary-foreground"
+                >
+                  <PersonStanding className="h-4 w-4" />
+                  Street View
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -285,6 +434,33 @@ function MapPage() {
             </div>
           </div>
         )}
+
+        {/* Street View overlay */}
+        <div
+          className={cn(
+            "absolute inset-0 z-20 bg-background transition-opacity",
+            streetView ? "opacity-100" : "pointer-events-none opacity-0",
+          )}
+        >
+          <div ref={panoEl} className="absolute inset-0 bg-muted" />
+
+          {streetViewError && (
+            <div className="absolute inset-0 grid place-items-center p-8">
+              <p className="text-center text-sm text-muted-foreground">
+                {streetViewError}
+              </p>
+            </div>
+          )}
+
+          <button
+            onClick={closeStreetView}
+            className="absolute left-4 top-4 z-30 flex items-center gap-1.5 rounded-2xl bg-card/95 px-3.5 py-2.5 text-sm font-semibold text-foreground shadow-lg backdrop-blur"
+            style={{ top: "max(1rem, env(safe-area-inset-top))" }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to map
+          </button>
+        </div>
       </div>
     </AppShell>
   );
