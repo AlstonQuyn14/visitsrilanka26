@@ -85,7 +85,7 @@ function Explore() {
           <div className="absolute inset-0 flex flex-col justify-between p-4">
             <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
               <MapPin className="h-4 w-4 text-accent" />
-              Live 3D map
+              Live location & Street View
             </p>
             <span className="w-fit rounded-full bg-card px-3 py-1.5 text-xs font-semibold text-primary shadow-sm">
               Open map
