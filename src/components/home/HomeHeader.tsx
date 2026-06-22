@@ -6,6 +6,7 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 
 export function HomeHeader() {
   const [name, setName] = useState<string | null>(null);
+  const { isDark, toggle } = useDarkMode();
 
   useEffect(() => {
     let active = true;
