@@ -151,6 +151,21 @@ async function handleOrderCompleted(data: any, custom: any, env: PaddleEnv) {
         .eq("paddle_transaction_id", data.id);
     }
   }
+
+  // Notify the operations inbox so the team can dispatch the paid booking.
+  const opsEmail = metadata.opsEmail;
+  if (opsEmail) {
+    await sendOperatorBookingNotice({
+      opsEmail,
+      itemName,
+      orderType,
+      amountFormatted: centsToAmountString(amountCents, currency),
+      customerName: customerName ?? undefined,
+      customerEmail: customerEmail ?? undefined,
+      details: metadata,
+      transactionId: data.id,
+    });
+  }
 }
 
 async function handleDonationCompleted(data: any, custom: any, env: PaddleEnv) {
