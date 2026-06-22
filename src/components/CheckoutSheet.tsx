@@ -46,6 +46,7 @@ export function CheckoutSheet({
   accent = "bg-primary/15 text-primary",
   subtitle,
   extra,
+  onPaid,
   onClose,
 }: CheckoutSheetProps) {
   const [name, setName] = useState("");
