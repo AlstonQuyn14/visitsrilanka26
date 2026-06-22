@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { cn } from "@/lib/utils";
 
-export type OrderType = "hotel" | "guide" | "grocery";
+export type OrderType = "hotel" | "guide" | "grocery" | "transport";
 
 const PRICE_BY_TYPE: Record<OrderType, string> = {
   hotel: "hotel_stay_unit",
   guide: "guide_booking_unit",
   grocery: "grocery_order_unit",
+  transport: "transport_booking_unit",
 };
 
 export interface CheckoutSheetProps {
@@ -26,6 +27,8 @@ export interface CheckoutSheetProps {
   subtitle?: string;
   /** Extra fields persisted with the order (stored in metadata). */
   extra?: Record<string, string>;
+  /** Called when payment completes successfully. */
+  onPaid?: () => void;
   onClose: () => void;
 }
 
@@ -43,6 +46,7 @@ export function CheckoutSheet({
   accent = "bg-primary/15 text-primary",
   subtitle,
   extra,
+  onPaid,
   onClose,
 }: CheckoutSheetProps) {
   const [name, setName] = useState("");
@@ -69,13 +73,16 @@ export function CheckoutSheet({
     function onMessage(e: MessageEvent) {
       const evtName =
         typeof e.data === "object" && e.data ? (e.data as any).name : undefined;
-      if (evtName === "checkout.completed") setStage("done");
+      if (evtName === "checkout.completed") {
+        setStage("done");
+        onPaid?.();
+      }
       if (evtName === "checkout.closed")
         setStage((s) => (s === "processing" ? "form" : s));
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  }, [onPaid]);
 
   async function handlePay() {
     setError(null);

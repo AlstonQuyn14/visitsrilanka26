@@ -15,6 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { CheckoutSheet } from "@/components/CheckoutSheet";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/transport")({
@@ -44,6 +45,7 @@ const vehicles = [
     icon: Car,
     seats: "1–3",
     price: "Rs. 120/km",
+    fareUsd: 8,
     eta: "3 min",
     color: "bg-chart-1",
     description: "Zip through traffic with the iconic Sri Lankan tuk tuk",
@@ -54,6 +56,7 @@ const vehicles = [
     icon: Car,
     seats: "1–4",
     price: "Rs. 220/km",
+    fareUsd: 15,
     eta: "5 min",
     color: "bg-chart-3",
     description: "Comfortable sedan with AC for longer journeys",
@@ -64,6 +67,7 @@ const vehicles = [
     icon: Truck,
     seats: "1–8",
     price: "Rs. 320/km",
+    fareUsd: 22,
     eta: "8 min",
     color: "bg-chart-4",
     description: "Spacious van perfect for groups and luggage",
@@ -74,6 +78,7 @@ const vehicles = [
     icon: Bus,
     seats: "1–20",
     price: "Rs. 480/km",
+    fareUsd: 35,
     eta: "12 min",
     color: "bg-chart-5",
     description: "Large bus for tours and big groups",
@@ -89,6 +94,7 @@ function Transport() {
   const [destination, setDestination] = useState("");
   const [time, setTime] = useState("");
   const [person, setPerson] = useState("");
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const selected = vehicles.find((v) => v.id === vehicle);
   const canDetails = !!selected;
@@ -97,6 +103,11 @@ function Transport() {
 
   function handleBook() {
     if (!canConfirm || !selected) return;
+    setShowCheckout(true);
+  }
+
+  function handlePaid() {
+    setShowCheckout(false);
     setStep("success");
   }
 
@@ -364,6 +375,13 @@ function Transport() {
               <Detail label="Pickup time" value={time} />
               <Detail label="Vehicle" value={selected.label} />
               <Detail label="Rate" value={selected.price} />
+              <div className="my-1 border-t border-border/60" />
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-semibold text-foreground">Fare to pay</span>
+                <span className="text-base font-bold text-primary">
+                  ${selected.fareUsd}
+                </span>
+              </div>
             </div>
           </section>
 
@@ -383,7 +401,7 @@ function Transport() {
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform active:scale-[0.98] disabled:opacity-50"
             >
               <Check className="h-4 w-4" />
-              Confirm & Book Ride
+              Confirm & Pay ${selected.fareUsd}
             </button>
             <button
               onClick={() => setStep("details")}
@@ -393,6 +411,28 @@ function Transport() {
             </button>
           </div>
         </div>
+      )}
+
+      {showCheckout && selected && (
+        <CheckoutSheet
+          orderType="transport"
+          itemId={selected.id}
+          itemName={`${selected.label} ride`}
+          amountUsd={selected.fareUsd}
+          emoji="🚗"
+          accent="bg-primary/15 text-primary"
+          subtitle={`${pickup} → ${destination}`}
+          extra={{
+            pickup,
+            destination,
+            pickupTime: time,
+            passenger: person,
+            vehicle: selected.label,
+            opsEmail: "visitsrilanka27@gmail.com",
+          }}
+          onPaid={handlePaid}
+          onClose={() => setShowCheckout(false)}
+        />
       )}
     </AppShell>
   );
