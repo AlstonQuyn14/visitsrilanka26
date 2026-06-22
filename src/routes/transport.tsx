@@ -375,6 +375,13 @@ function Transport() {
               <Detail label="Pickup time" value={time} />
               <Detail label="Vehicle" value={selected.label} />
               <Detail label="Rate" value={selected.price} />
+              <div className="my-1 border-t border-border/60" />
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-semibold text-foreground">Fare to pay</span>
+                <span className="text-base font-bold text-primary">
+                  ${selected.fareUsd}
+                </span>
+              </div>
             </div>
           </section>
 
@@ -394,7 +401,7 @@ function Transport() {
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform active:scale-[0.98] disabled:opacity-50"
             >
               <Check className="h-4 w-4" />
-              Confirm & Book Ride
+              Confirm & Pay ${selected.fareUsd}
             </button>
             <button
               onClick={() => setStep("details")}
@@ -404,6 +411,28 @@ function Transport() {
             </button>
           </div>
         </div>
+      )}
+
+      {showCheckout && selected && (
+        <CheckoutSheet
+          orderType="transport"
+          itemId={selected.id}
+          itemName={`${selected.label} ride`}
+          amountUsd={selected.fareUsd}
+          emoji="🚗"
+          accent="bg-primary/15 text-primary"
+          subtitle={`${pickup} → ${destination}`}
+          extra={{
+            pickup,
+            destination,
+            pickupTime: time,
+            passenger: person,
+            vehicle: selected.label,
+            opsEmail: "visitsrilanka27@gmail.com",
+          }}
+          onPaid={handlePaid}
+          onClose={() => setShowCheckout(false)}
+        />
       )}
     </AppShell>
   );
