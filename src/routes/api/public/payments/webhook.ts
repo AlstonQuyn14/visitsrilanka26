@@ -59,6 +59,31 @@ async function sendOrderReceipt(params: {
   }
 }
 
+async function sendOperatorBookingNotice(params: {
+  opsEmail: string;
+  itemName: string;
+  orderType: string;
+  amountFormatted: string;
+  customerName?: string;
+  customerEmail?: string;
+  details: Record<string, string>;
+  transactionId: string;
+}) {
+  try {
+    const { sendOperatorBookingEmail } = await import(
+      "@/lib/email/operator-booking.server"
+    );
+    await sendOperatorBookingEmail(params);
+    return true;
+  } catch (e) {
+    console.warn(
+      "Operator booking notice skipped:",
+      (e as Error)?.message,
+    );
+    return false;
+  }
+}
+
 async function handleOrderCompleted(data: any, custom: any, env: PaddleEnv) {
   const userId = custom.userId || null;
   const orderType = custom.orderType || "order";
