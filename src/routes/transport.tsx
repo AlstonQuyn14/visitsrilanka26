@@ -94,6 +94,7 @@ function Transport() {
   const [destination, setDestination] = useState("");
   const [time, setTime] = useState("");
   const [person, setPerson] = useState("");
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const selected = vehicles.find((v) => v.id === vehicle);
   const canDetails = !!selected;
@@ -102,6 +103,11 @@ function Transport() {
 
   function handleBook() {
     if (!canConfirm || !selected) return;
+    setShowCheckout(true);
+  }
+
+  function handlePaid() {
+    setShowCheckout(false);
     setStep("success");
   }
 
