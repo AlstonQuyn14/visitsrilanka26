@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { cn } from "@/lib/utils";
 
-export type OrderType = "hotel" | "guide" | "grocery";
+export type OrderType = "hotel" | "guide" | "grocery" | "transport";
 
 const PRICE_BY_TYPE: Record<OrderType, string> = {
   hotel: "hotel_stay_unit",
   guide: "guide_booking_unit",
   grocery: "grocery_order_unit",
+  transport: "transport_booking_unit",
 };
 
 export interface CheckoutSheetProps {
