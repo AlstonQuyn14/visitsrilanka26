@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Sun, Moon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 export function HomeHeader() {
   const [name, setName] = useState<string | null>(null);
