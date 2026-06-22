@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Sun, Moon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 export function HomeHeader() {
   const [name, setName] = useState<string | null>(null);
+  const { isDark, toggle } = useDarkMode();
 
   useEffect(() => {
     let active = true;
@@ -45,14 +47,23 @@ export function HomeHeader() {
             </p>
           </div>
         </div>
-        <Link
-          to="/notifications"
-          aria-label="Notifications"
-          className="relative grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-card text-foreground"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggle}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-card text-foreground"
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+          <Link
+            to="/notifications"
+            aria-label="Notifications"
+            className="relative grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-card text-foreground"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent" />
+          </Link>
+        </div>
       </div>
 
       <div className="mt-5 flex items-center gap-2 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-sm">
