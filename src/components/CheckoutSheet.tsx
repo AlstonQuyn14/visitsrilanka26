@@ -73,13 +73,16 @@ export function CheckoutSheet({
     function onMessage(e: MessageEvent) {
       const evtName =
         typeof e.data === "object" && e.data ? (e.data as any).name : undefined;
-      if (evtName === "checkout.completed") setStage("done");
+      if (evtName === "checkout.completed") {
+        setStage("done");
+        onPaid?.();
+      }
       if (evtName === "checkout.closed")
         setStage((s) => (s === "processing" ? "form" : s));
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  }, [onPaid]);
 
   async function handlePay() {
     setError(null);
