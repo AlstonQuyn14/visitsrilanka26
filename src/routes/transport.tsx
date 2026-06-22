@@ -15,6 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { CheckoutSheet } from "@/components/CheckoutSheet";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/transport")({
