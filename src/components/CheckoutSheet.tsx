@@ -27,6 +27,8 @@ export interface CheckoutSheetProps {
   subtitle?: string;
   /** Extra fields persisted with the order (stored in metadata). */
   extra?: Record<string, string>;
+  /** Called when payment completes successfully. */
+  onPaid?: () => void;
   onClose: () => void;
 }
 
