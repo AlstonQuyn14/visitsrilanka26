@@ -301,7 +301,7 @@ function Grocery() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const { openCheckout } = usePaddleCheckout();
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLElement | null>(null);
 
   const goToMenu = () => {
     menuRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
