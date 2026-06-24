@@ -77,6 +77,7 @@ export const createGuide = createServerFn({ method: "POST" })
     const { data: inserted, error } = await context.supabase
       .from("guides")
       .insert({
+        user_id: context.userId,
         name: data.name,
         bio: data.bio,
         languages: data.languages,
