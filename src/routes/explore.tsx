@@ -149,7 +149,21 @@ function Explore() {
         ) : (
           <div className="space-y-3">
             {filtered.map((d) => (
-              <DestinationCard key={d.id} destination={d} variant="compact" />
+              <Link
+                key={d.id}
+                to="/map"
+                search={{
+                  lat: d.lat,
+                  lng: d.lng,
+                  place: d.name,
+                  region: d.region,
+                  category: d.category,
+                  sv: true,
+                }}
+                className="block transition-transform active:scale-[0.98]"
+              >
+                <DestinationCard destination={d} variant="compact" />
+              </Link>
             ))}
           </div>
         )}
