@@ -33,6 +33,17 @@ export const Route = createFileRoute("/map")({
       },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    lat:
+      search.lat !== undefined && search.lat !== "" ? Number(search.lat) : undefined,
+    lng:
+      search.lng !== undefined && search.lng !== "" ? Number(search.lng) : undefined,
+    place: typeof search.place === "string" ? search.place : undefined,
+    region: typeof search.region === "string" ? search.region : undefined,
+    category: typeof search.category === "string" ? search.category : undefined,
+    emoji: typeof search.emoji === "string" ? search.emoji : undefined,
+    sv: search.sv === true || search.sv === "1" || search.sv === "true",
+  }),
   component: MapPage,
 });
 
@@ -40,6 +51,7 @@ type MapType = "hybrid" | "terrain" | "roadmap";
 type LatLng = { lat: number; lng: number };
 
 function MapPage() {
+  const search = Route.useSearch();
   const { loaded, error } = useGoogleMaps();
   const mapEl = useRef<HTMLDivElement>(null);
   const panoEl = useRef<HTMLDivElement>(null);
@@ -267,6 +279,37 @@ function MapPage() {
     setStreetViewError(null);
     if (panoRef.current) panoRef.current.setVisible(false);
   };
+
+  // Focus a place passed via search params (e.g. tapped from Explore),
+  // optionally opening Street View instantly.
+  const didFocusRef = useRef(false);
+  useEffect(() => {
+    if (!loaded || didFocusRef.current) return;
+    if (search.lat == null || search.lng == null || Number.isNaN(search.lat) || Number.isNaN(search.lng)) {
+      return;
+    }
+    didFocusRef.current = true;
+    const target = { lat: search.lat, lng: search.lng };
+
+    setSelected({
+      id: search.place ?? "place",
+      name: search.place ?? "Selected place",
+      region: search.region ?? "Sri Lanka",
+      category: (search.category as IconicPlace["category"]) ?? "Historical",
+      emoji: search.emoji ?? "📍",
+      lat: search.lat,
+      lng: search.lng,
+    });
+
+    if (mapRef.current) {
+      mapRef.current.panTo(target);
+      mapRef.current.setZoom(15);
+    }
+    if (search.sv) openStreetView(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, search.lat, search.lng, search.sv]);
+
+
 
   return (
     <AppShell>
