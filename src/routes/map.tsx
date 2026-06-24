@@ -282,6 +282,7 @@ function MapPage() {
 
   const closeStreetView = () => {
     setStreetView(false);
+    setStreetViewLoading(false);
     setStreetViewError(null);
     if (panoRef.current) panoRef.current.setVisible(false);
   };
