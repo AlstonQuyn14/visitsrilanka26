@@ -222,7 +222,8 @@ interface FoodService {
   id: string;
   name: string;
   tagline: string;
-  hotline: string;
+  /** Official website — opens so travellers can see the real products. */
+  url: string;
   emoji: string;
   tone: string;
 }
@@ -232,7 +233,7 @@ const foodServices: FoodService[] = [
     id: "pickme-food",
     name: "PickMe Food",
     tagline: "Sri Lanka's #1 food delivery",
-    hotline: "+94 117 429 429",
+    url: "https://pickme.lk/food",
     emoji: "🛵",
     tone: "bg-chart-4/20 text-chart-5",
   },
@@ -240,41 +241,49 @@ const foodServices: FoodService[] = [
     id: "uber-eats",
     name: "Uber Eats LK",
     tagline: "Restaurants near you, fast",
-    hotline: "+94 117 455 455",
+    url: "https://www.ubereats.com",
     emoji: "🍔",
     tone: "bg-foreground/10 text-foreground",
   },
   {
-    id: "kapruka",
-    name: "Kapruka Food",
-    tagline: "Meals, cakes & groceries",
-    hotline: "+94 117 551 111",
-    emoji: "🎂",
-    tone: "bg-accent/15 text-accent",
-  },
-  {
-    id: "uber-ceylon",
-    name: "Glovo Ceylon",
-    tagline: "Anything delivered in minutes",
-    hotline: "+94 117 200 200",
-    emoji: "🥡",
-    tone: "bg-chart-3/15 text-chart-3",
+    id: "pizzahut",
+    name: "Pizza Hut",
+    tagline: "Order hot, cheesy pizzas online",
+    url: "https://www.pizzahut.lk",
+    emoji: "🍕",
+    tone: "bg-destructive/15 text-destructive",
   },
   {
     id: "domino",
     name: "Domino's Pizza",
-    tagline: "Hot pizza hotline delivery",
-    hotline: "+94 117 826 826",
+    tagline: "Fresh pizza, fast delivery",
+    url: "https://www.dominos.lk",
     emoji: "🍕",
     tone: "bg-primary/15 text-primary",
   },
   {
+    id: "kapruka-cake",
+    name: "Kapruka Cake",
+    tagline: "Cakes, meals & gifts online",
+    url: "https://www.kapruka.com/cakes",
+    emoji: "🎂",
+    tone: "bg-accent/15 text-accent",
+  },
+  {
+    id: "green-cabin",
+    name: "Green Cabin",
+    tagline: "Classic Sri Lankan restaurant",
+    url: "https://www.greencabin.lk",
+    emoji: "🥗",
+    tone: "bg-chart-3/15 text-chart-3",
+  },
+  {
     id: "kfc",
     name: "KFC Sri Lanka",
-    tagline: "Finger lickin' delivery",
-    hotline: "+94 115 777 777",
+    tagline: "Order online, finger lickin' good",
+    url: "https://www.kfc.lk",
     emoji: "🍗",
-    tone: "bg-destructive/15 text-destructive",
+    tone: "bg-chart-4/20 text-chart-5",
   },
 ];
 
