@@ -599,14 +599,16 @@ function Grocery() {
         <div className="px-5">
           <h3 className="text-base font-bold">Order in from food delivery 🛵</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Tap to call the hotline and order hot meals straight to you.
+            Tap to open the official website and see their real menu & products.
           </p>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 px-5">
           {foodServices.map((f) => (
             <a
               key={f.id}
-              href={`tel:${f.hotline.replace(/\s/g, "")}`}
+              href={f.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex flex-col rounded-3xl border border-border/60 bg-card p-4 shadow-sm transition-transform active:scale-95"
             >
               <span className={cn("grid h-11 w-11 place-items-center rounded-2xl text-2xl", f.tone)}>
@@ -615,12 +617,13 @@ function Grocery() {
               <p className="mt-3 text-sm font-semibold leading-tight">{f.name}</p>
               <p className="mt-0.5 text-[11px] text-muted-foreground">{f.tagline}</p>
               <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary">
-                <Phone className="h-3 w-3" /> {f.hotline}
+                <ExternalLink className="h-3 w-3" /> Visit website
               </span>
             </a>
           ))}
         </div>
       </section>
+
 
       {/* Payment method */}
       <section className="mt-6">
