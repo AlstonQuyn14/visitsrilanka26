@@ -208,6 +208,7 @@ export interface Activity {
   category: string;
   region: string;
   tagline: string;
+  hotline: string;
 }
 
 export const activities: Activity[] = [
