@@ -7,7 +7,7 @@ import { QuickActions } from "@/components/home/QuickActions";
 import { SectionHeader } from "@/components/SectionHeader";
 import { DestinationCard } from "@/components/DestinationCard";
 import { destinations, activities } from "@/lib/data";
-import { MapPin } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
