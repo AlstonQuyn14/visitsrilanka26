@@ -69,6 +69,7 @@ function MapPage() {
   const [selected, setSelected] = useState<IconicPlace | null>(null);
   const [userPos, setUserPos] = useState<LatLng | null>(null);
   const [streetView, setStreetView] = useState(false);
+  const [streetViewLoading, setStreetViewLoading] = useState(false);
   const [streetViewError, setStreetViewError] = useState<string | null>(null);
 
   // Init map once API is ready
