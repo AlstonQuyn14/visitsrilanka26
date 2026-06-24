@@ -493,7 +493,7 @@ function Grocery() {
 
       {/* Stores */}
       <section className="mt-6">
-        <div class="flex items-center justify-between px-5">
+        <div className="flex items-center justify-between px-5">
           <h3 className="text-base font-bold">Choose a store</h3>
           {store && (
             <button
