@@ -121,6 +121,13 @@ function Home() {
                   <MapPin className="h-3 w-3" />
                   <span className="truncate">{a.region}</span>
                 </p>
+                <a
+                  href={`tel:${a.hotline.replace(/\s/g, "")}`}
+                  className="mt-1.5 flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2 text-xs font-semibold text-primary transition-colors active:bg-primary/20"
+                >
+                  <Phone className="h-3.5 w-3.5" />
+                  Book a time
+                </a>
               </div>
             </article>
           ))}
