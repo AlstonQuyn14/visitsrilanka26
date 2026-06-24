@@ -639,35 +639,50 @@ function Grocery() {
         </div>
       </section>
 
-      <section className="mt-6">
-        <h3 className="px-5 text-base font-bold">Categories</h3>
-        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
-          {categories.map((c) => (
-            <button
-              key={c.label}
-              onClick={() => setActive(c.label)}
-              className={cn(
-                "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                active === c.label
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border/60 bg-card text-foreground",
-              )}
-            >
-              <span>{c.emoji}</span>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      </section>
+      {!store ? (
+        <section className="mt-8 px-5">
+          <div className="rounded-3xl border border-dashed border-border/70 bg-card p-6 text-center">
+            <p className="text-sm font-semibold text-foreground">
+              Pick a store to see its menu
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Choose a supermarket for groceries & fruits, or Pizza Hut / Domino's
+              for pizza. We only show what that store actually carries.
+            </p>
+          </div>
+        </section>
+      ) : (
+        <>
+          <section className="mt-6">
+            <h3 className="px-5 text-base font-bold">Categories</h3>
+            <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
+              {storeCategories.map((c) => (
+                <button
+                  key={c.label}
+                  onClick={() => setActive(c.label)}
+                  className={cn(
+                    "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                    active === c.label
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border/60 bg-card text-foreground",
+                  )}
+                >
+                  <span>{c.emoji}</span>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </section>
 
-      {/* Items */}
-      <section className="mt-5 px-5">
-        <h3 className="text-base font-bold">
-          {active === "All" ? "All items" : active}{" "}
-          <span className="text-sm font-normal text-muted-foreground">
-            ({filtered.length})
-          </span>
-        </h3>
+          {/* Items */}
+          <section className="mt-5 px-5">
+            <h3 className="text-base font-bold">
+              {active === "All" ? `${store.name} menu` : active}{" "}
+              <span className="text-sm font-normal text-muted-foreground">
+                ({filtered.length})
+              </span>
+            </h3>
+
 
         {filtered.length === 0 ? (
           <p className="mt-6 text-center text-sm text-muted-foreground">
