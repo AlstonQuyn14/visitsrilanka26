@@ -362,6 +362,14 @@ function Grocery() {
       return next;
     });
 
+  // Switching store clears the cart since menus differ between stores.
+  const selectStore = (s: Store | null) => {
+    setStore(s);
+    setCart({});
+    setActive("All");
+    setQuery("");
+  };
+
   const reset = () => {
     setPlaced(false);
     setCart({});
