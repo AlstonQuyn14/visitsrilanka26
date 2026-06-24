@@ -542,13 +542,18 @@ function Grocery() {
                 >
                   <Phone className="h-3.5 w-3.5" /> Call hotline
                 </a>
-                <div className="flex items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground">
+                <button
+                  type="button"
+                  onClick={goToMenu}
+                  className="flex items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-95"
+                >
                   <ShoppingBag className="h-3.5 w-3.5" /> Book a food with us
-                </div>
+                </button>
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
-                Add items below and pay securely in-app — your order is handled by
-                Visit Sri Lanka. Or call the hotline to order directly.
+                Order from {store.name} and pay securely in-app — your money is
+                handled by Visit Sri Lanka, so you don't get scammed. Or call the
+                hotline to order directly.
               </p>
             </div>
           </div>
