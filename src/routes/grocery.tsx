@@ -663,7 +663,7 @@ function Grocery() {
         </section>
       ) : (
         <>
-          <section className="mt-6">
+          <section ref={menuRef} className="mt-6 scroll-mt-4">>
             <h3 className="px-5 text-base font-bold">Categories</h3>
             <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
               {storeCategories.map((c) => (
