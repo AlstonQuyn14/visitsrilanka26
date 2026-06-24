@@ -10,6 +10,8 @@ import {
   Crosshair,
   LocateFixed,
   PersonStanding,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { iconicPlaces, sriLankaCenter, type IconicPlace } from "@/lib/data";
