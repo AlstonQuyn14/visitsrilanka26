@@ -326,12 +326,23 @@ function Grocery() {
   }, []);
 
   const filtered = useMemo(() => {
+    if (!store) return [];
     return items.filter((it) => {
+      const inStore = it.storeIds.includes(store.id);
       const matchCat = active === "All" || it.category === active;
       const matchQuery = it.name.toLowerCase().includes(query.trim().toLowerCase());
-      return matchCat && matchQuery;
+      return inStore && matchCat && matchQuery;
     });
-  }, [active, query]);
+  }, [store, active, query]);
+
+  // Categories that the selected store actually carries.
+  const storeCategories = useMemo(() => {
+    if (!store) return categories;
+    const present = new Set(
+      items.filter((it) => it.storeIds.includes(store.id)).map((it) => it.category),
+    );
+    return categories.filter((c) => c.label === "All" || present.has(c.label as Category));
+  }, [store]);
 
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
   const subtotal = Object.entries(cart).reduce((sum, [id, qty]) => {
