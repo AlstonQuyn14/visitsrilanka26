@@ -493,11 +493,11 @@ function Grocery() {
 
       {/* Stores */}
       <section className="mt-6">
-        <div className="flex items-center justify-between px-5">
-          <h3 className="text-base font-bold">Choose a supermarket</h3>
+        <div class="flex items-center justify-between px-5">
+          <h3 className="text-base font-bold">Choose a store</h3>
           {store && (
             <button
-              onClick={() => setStore(null)}
+              onClick={() => selectStore(null)}
               className="text-xs font-medium text-primary"
             >
               Change
@@ -507,25 +507,44 @@ function Grocery() {
 
         {store ? (
           <div className="mt-3 px-5">
-            <div className="flex items-center gap-3 rounded-3xl border border-primary/30 bg-primary/5 p-4">
-              <span className={cn("grid h-12 w-12 place-items-center rounded-2xl text-2xl", store.tone)}>
-                {store.emoji}
-              </span>
-              <div className="flex-1">
-                <p className="font-semibold">{store.name}</p>
-                <div className="mt-0.5 flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Star className="h-3 w-3 fill-chart-4 text-chart-4" /> {store.rating}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> {store.eta}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Truck className="h-3 w-3" /> {store.fee}
-                  </span>
+            <div className="rounded-3xl border border-primary/30 bg-primary/5 p-4">
+              <div className="flex items-center gap-3">
+                <span className={cn("grid h-12 w-12 place-items-center rounded-2xl text-2xl", store.tone)}>
+                  {store.emoji}
+                </span>
+                <div className="flex-1">
+                  <p className="font-semibold">{store.name}</p>
+                  <div className="mt-0.5 flex items-center gap-3 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-chart-4 text-chart-4" /> {store.rating}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> {store.eta}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Truck className="h-3 w-3" /> {store.fee}
+                    </span>
+                  </div>
+                </div>
+                <Check className="h-5 w-5 text-primary" />
+              </div>
+
+              {/* Hotline + Book a food with us */}
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <a
+                  href={`tel:${store.hotline.replace(/\s/g, "")}`}
+                  className="flex items-center justify-center gap-1.5 rounded-2xl border border-primary/30 bg-card px-3 py-2.5 text-xs font-semibold text-primary transition-transform active:scale-95"
+                >
+                  <Phone className="h-3.5 w-3.5" /> Call hotline
+                </a>
+                <div className="flex items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground">
+                  <ShoppingBag className="h-3.5 w-3.5" /> Book a food with us
                 </div>
               </div>
-              <Check className="h-5 w-5 text-primary" />
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Add items below and pay securely in-app — your order is handled by
+                Visit Sri Lanka. Or call the hotline to order directly.
+              </p>
             </div>
           </div>
         ) : (
@@ -533,7 +552,7 @@ function Grocery() {
             {stores.map((s) => (
               <button
                 key={s.id}
-                onClick={() => setStore(s)}
+                onClick={() => selectStore(s)}
                 className="flex w-40 shrink-0 flex-col rounded-3xl border border-border/60 bg-card p-4 text-left shadow-sm transition-transform active:scale-95"
               >
                 <span className={cn("grid h-12 w-12 place-items-center rounded-2xl text-2xl", s.tone)}>
@@ -554,6 +573,7 @@ function Grocery() {
           </div>
         )}
       </section>
+
 
       {/* Food delivery services */}
       <section className="mt-6">
