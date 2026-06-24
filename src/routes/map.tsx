@@ -494,11 +494,44 @@ function MapPage() {
         >
           <div ref={panoEl} className="absolute inset-0 bg-muted" />
 
-          {streetViewError && (
-            <div className="absolute inset-0 grid place-items-center p-8">
-              <p className="text-center text-sm text-muted-foreground">
-                {streetViewError}
-              </p>
+          {/* Loading state */}
+          {streetViewLoading && (
+            <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 backdrop-blur-sm">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm font-medium text-muted-foreground">
+                  Opening Street View…
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Fallback when Street View is unavailable */}
+          {streetViewError && !streetViewLoading && (
+            <div className="absolute inset-0 z-10 grid place-items-center p-8">
+              <div className="flex max-w-xs flex-col items-center gap-4 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-2xl backdrop-blur">
+                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-accent/15">
+                  <AlertTriangle className="h-7 w-7 text-accent" />
+                </div>
+                <div className="text-center">
+                  <p className="text-base font-bold text-foreground">
+                    Street View unavailable
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {streetViewError}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Try another location or switch back to the map.
+                  </p>
+                </div>
+                <button
+                  onClick={closeStreetView}
+                  className="flex items-center gap-2 rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to map
+                </button>
+              </div>
             </div>
           )}
 
