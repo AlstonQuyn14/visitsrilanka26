@@ -51,6 +51,7 @@ type MapType = "hybrid" | "terrain" | "roadmap";
 type LatLng = { lat: number; lng: number };
 
 function MapPage() {
+  const search = Route.useSearch();
   const { loaded, error } = useGoogleMaps();
   const mapEl = useRef<HTMLDivElement>(null);
   const panoEl = useRef<HTMLDivElement>(null);
