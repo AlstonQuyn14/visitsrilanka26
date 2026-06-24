@@ -11,6 +11,7 @@ import {
   Clock,
   Truck,
   Phone,
+  ExternalLink,
   CreditCard,
   Banknote,
   Loader2,
@@ -222,7 +223,8 @@ interface FoodService {
   id: string;
   name: string;
   tagline: string;
-  hotline: string;
+  /** Official website — opens so travellers can see the real products. */
+  url: string;
   emoji: string;
   tone: string;
 }
@@ -232,7 +234,7 @@ const foodServices: FoodService[] = [
     id: "pickme-food",
     name: "PickMe Food",
     tagline: "Sri Lanka's #1 food delivery",
-    hotline: "+94 117 429 429",
+    url: "https://pickme.lk/food",
     emoji: "🛵",
     tone: "bg-chart-4/20 text-chart-5",
   },
@@ -240,41 +242,49 @@ const foodServices: FoodService[] = [
     id: "uber-eats",
     name: "Uber Eats LK",
     tagline: "Restaurants near you, fast",
-    hotline: "+94 117 455 455",
+    url: "https://www.ubereats.com",
     emoji: "🍔",
     tone: "bg-foreground/10 text-foreground",
   },
   {
-    id: "kapruka",
-    name: "Kapruka Food",
-    tagline: "Meals, cakes & groceries",
-    hotline: "+94 117 551 111",
-    emoji: "🎂",
-    tone: "bg-accent/15 text-accent",
-  },
-  {
-    id: "uber-ceylon",
-    name: "Glovo Ceylon",
-    tagline: "Anything delivered in minutes",
-    hotline: "+94 117 200 200",
-    emoji: "🥡",
-    tone: "bg-chart-3/15 text-chart-3",
+    id: "pizzahut",
+    name: "Pizza Hut",
+    tagline: "Order hot, cheesy pizzas online",
+    url: "https://www.pizzahut.lk",
+    emoji: "🍕",
+    tone: "bg-destructive/15 text-destructive",
   },
   {
     id: "domino",
     name: "Domino's Pizza",
-    tagline: "Hot pizza hotline delivery",
-    hotline: "+94 117 826 826",
+    tagline: "Fresh pizza, fast delivery",
+    url: "https://www.dominos.lk",
     emoji: "🍕",
     tone: "bg-primary/15 text-primary",
   },
   {
+    id: "kapruka-cake",
+    name: "Kapruka Cake",
+    tagline: "Cakes, meals & gifts online",
+    url: "https://www.kapruka.com/cakes",
+    emoji: "🎂",
+    tone: "bg-accent/15 text-accent",
+  },
+  {
+    id: "green-cabin",
+    name: "Green Cabin",
+    tagline: "Classic Sri Lankan restaurant",
+    url: "https://www.greencabin.lk",
+    emoji: "🥗",
+    tone: "bg-chart-3/15 text-chart-3",
+  },
+  {
     id: "kfc",
     name: "KFC Sri Lanka",
-    tagline: "Finger lickin' delivery",
-    hotline: "+94 115 777 777",
+    tagline: "Order online, finger lickin' good",
+    url: "https://www.kfc.lk",
     emoji: "🍗",
-    tone: "bg-destructive/15 text-destructive",
+    tone: "bg-chart-4/20 text-chart-5",
   },
 ];
 
@@ -590,14 +600,16 @@ function Grocery() {
         <div className="px-5">
           <h3 className="text-base font-bold">Order in from food delivery 🛵</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Tap to call the hotline and order hot meals straight to you.
+            Tap to open the official website and see their real menu & products.
           </p>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 px-5">
           {foodServices.map((f) => (
             <a
               key={f.id}
-              href={`tel:${f.hotline.replace(/\s/g, "")}`}
+              href={f.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex flex-col rounded-3xl border border-border/60 bg-card p-4 shadow-sm transition-transform active:scale-95"
             >
               <span className={cn("grid h-11 w-11 place-items-center rounded-2xl text-2xl", f.tone)}>
@@ -606,12 +618,13 @@ function Grocery() {
               <p className="mt-3 text-sm font-semibold leading-tight">{f.name}</p>
               <p className="mt-0.5 text-[11px] text-muted-foreground">{f.tagline}</p>
               <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary">
-                <Phone className="h-3 w-3" /> {f.hotline}
+                <ExternalLink className="h-3 w-3" /> Visit website
               </span>
             </a>
           ))}
         </div>
       </section>
+
 
       {/* Payment method */}
       <section className="mt-6">
