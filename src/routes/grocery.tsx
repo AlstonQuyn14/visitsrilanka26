@@ -56,6 +56,7 @@ interface Store {
   fee: string;
   tone: string;
   emoji: string;
+  hotline: string;
 }
 
 const stores: Store[] = [
@@ -68,6 +69,7 @@ const stores: Store[] = [
     fee: "Rs. 250",
     tone: "bg-chart-3/15 text-chart-3",
     emoji: "🛒",
+    hotline: "+94 112 421 100",
   },
   {
     id: "keells",
@@ -78,6 +80,7 @@ const stores: Store[] = [
     fee: "Rs. 300",
     tone: "bg-primary/15 text-primary",
     emoji: "🏪",
+    hotline: "+94 117 522 522",
   },
   {
     id: "laughs",
@@ -88,6 +91,7 @@ const stores: Store[] = [
     fee: "Rs. 200",
     tone: "bg-accent/15 text-accent",
     emoji: "🧺",
+    hotline: "+94 112 304 040",
   },
   {
     id: "spar",
@@ -98,6 +102,7 @@ const stores: Store[] = [
     fee: "Rs. 280",
     tone: "bg-chart-5/15 text-chart-5",
     emoji: "🥬",
+    hotline: "+94 112 555 777",
   },
   {
     id: "arpico",
@@ -108,15 +113,46 @@ const stores: Store[] = [
     fee: "Rs. 220",
     tone: "bg-chart-4/20 text-chart-5",
     emoji: "🛍️",
+    hotline: "+94 112 310 000",
+  },
+  {
+    id: "pizzahut",
+    name: "Pizza Hut",
+    tagline: "Hot, cheesy pizzas to your door",
+    rating: 4.7,
+    eta: "30–40 min",
+    fee: "Rs. 350",
+    tone: "bg-destructive/15 text-destructive",
+    emoji: "🍕",
+    hotline: "+94 117 555 555",
+  },
+  {
+    id: "dominos",
+    name: "Domino's Pizza",
+    tagline: "Fresh pizza, fast delivery",
+    rating: 4.6,
+    eta: "25–35 min",
+    fee: "Rs. 320",
+    tone: "bg-primary/15 text-primary",
+    emoji: "🍕",
+    hotline: "+94 117 826 826",
   },
 ];
 
-type Category = "Food" | "Vegetables" | "Common Food" | "Fast Food";
+type Category =
+  | "Food"
+  | "Vegetables"
+  | "Fruits"
+  | "Common Food"
+  | "Fast Food"
+  | "Pizza";
 
 const categories: { label: Category | "All"; emoji: string }[] = [
   { label: "All", emoji: "✨" },
+  { label: "Pizza", emoji: "🍕" },
   { label: "Food", emoji: "🍲" },
   { label: "Vegetables", emoji: "🥕" },
+  { label: "Fruits", emoji: "🍎" },
   { label: "Common Food", emoji: "🍚" },
   { label: "Fast Food", emoji: "🍔" },
 ];
@@ -128,33 +164,58 @@ interface Item {
   unit: string;
   price: number;
   emoji: string;
+  /** Which stores carry this item. */
+  storeIds: string[];
 }
 
+// Supermarkets carry the full grocery range.
+const SUPERMARKETS = ["cargills", "keells", "laughs", "spar", "arpico"];
+
 const items: Item[] = [
-  // Vegetables
-  { id: "carrot", name: "Fresh Carrots", category: "Vegetables", unit: "1 kg", price: 380, emoji: "🥕" },
-  { id: "tomato", name: "Ripe Tomatoes", category: "Vegetables", unit: "1 kg", price: 420, emoji: "🍅" },
-  { id: "leeks", name: "Green Leeks", category: "Vegetables", unit: "500 g", price: 260, emoji: "🥬" },
-  { id: "potato", name: "Potatoes", category: "Vegetables", unit: "1 kg", price: 340, emoji: "🥔" },
-  { id: "onion", name: "Red Onions", category: "Vegetables", unit: "1 kg", price: 450, emoji: "🧅" },
-  { id: "chilli", name: "Green Chilli", category: "Vegetables", unit: "250 g", price: 180, emoji: "🌶️" },
-  // Common Food (staples)
-  { id: "rice", name: "Nadu Rice", category: "Common Food", unit: "5 kg", price: 1450, emoji: "🍚" },
-  { id: "dhal", name: "Red Dhal", category: "Common Food", unit: "1 kg", price: 540, emoji: "🫘" },
-  { id: "coconut", name: "Fresh Coconut", category: "Common Food", unit: "2 pcs", price: 320, emoji: "🥥" },
-  { id: "eggs", name: "Farm Eggs", category: "Common Food", unit: "10 pcs", price: 560, emoji: "🥚" },
-  { id: "bread", name: "Sandwich Bread", category: "Common Food", unit: "1 loaf", price: 240, emoji: "🍞" },
-  { id: "milk", name: "Fresh Milk", category: "Common Food", unit: "1 L", price: 480, emoji: "🥛" },
-  // Food (cooked / ready meals)
-  { id: "kottu", name: "Chicken Kottu", category: "Food", unit: "1 plate", price: 850, emoji: "🍛" },
-  { id: "riceandcurry", name: "Rice & Curry", category: "Food", unit: "1 plate", price: 650, emoji: "🍲" },
-  { id: "hoppers", name: "Egg Hoppers", category: "Food", unit: "3 pcs", price: 420, emoji: "🍳" },
-  { id: "stringhopper", name: "String Hoppers", category: "Food", unit: "10 pcs", price: 380, emoji: "🍜" },
-  // Fast Food
-  { id: "burger", name: "Cheese Burger", category: "Fast Food", unit: "1 pc", price: 720, emoji: "🍔" },
-  { id: "pizza", name: "Veggie Pizza", category: "Fast Food", unit: "Medium", price: 1650, emoji: "🍕" },
-  { id: "fries", name: "Crispy Fries", category: "Fast Food", unit: "Large", price: 520, emoji: "🍟" },
-  { id: "shorteats", name: "Short Eats Pack", category: "Fast Food", unit: "6 pcs", price: 480, emoji: "🥟" },
+  // Vegetables (supermarkets)
+  { id: "carrot", name: "Fresh Carrots", category: "Vegetables", unit: "1 kg", price: 380, emoji: "🥕", storeIds: SUPERMARKETS },
+  { id: "tomato", name: "Ripe Tomatoes", category: "Vegetables", unit: "1 kg", price: 420, emoji: "🍅", storeIds: SUPERMARKETS },
+  { id: "leeks", name: "Green Leeks", category: "Vegetables", unit: "500 g", price: 260, emoji: "🥬", storeIds: SUPERMARKETS },
+  { id: "potato", name: "Potatoes", category: "Vegetables", unit: "1 kg", price: 340, emoji: "🥔", storeIds: SUPERMARKETS },
+  { id: "onion", name: "Red Onions", category: "Vegetables", unit: "1 kg", price: 450, emoji: "🧅", storeIds: SUPERMARKETS },
+  { id: "chilli", name: "Green Chilli", category: "Vegetables", unit: "250 g", price: 180, emoji: "🌶️", storeIds: SUPERMARKETS },
+  // Fruits (supermarkets)
+  { id: "banana", name: "Ambul Bananas", category: "Fruits", unit: "1 dozen", price: 360, emoji: "🍌", storeIds: SUPERMARKETS },
+  { id: "mango", name: "Sweet Mangoes", category: "Fruits", unit: "1 kg", price: 620, emoji: "🥭", storeIds: SUPERMARKETS },
+  { id: "papaya", name: "Fresh Papaya", category: "Fruits", unit: "1 pc", price: 280, emoji: "🍈", storeIds: SUPERMARKETS },
+  { id: "pineapple", name: "Pineapple", category: "Fruits", unit: "1 pc", price: 340, emoji: "🍍", storeIds: SUPERMARKETS },
+  { id: "watermelon", name: "Watermelon", category: "Fruits", unit: "1 pc", price: 520, emoji: "🍉", storeIds: SUPERMARKETS },
+  { id: "apple", name: "Red Apples", category: "Fruits", unit: "1 kg", price: 780, emoji: "🍎", storeIds: SUPERMARKETS },
+  // Common Food (staples, supermarkets)
+  { id: "rice", name: "Nadu Rice", category: "Common Food", unit: "5 kg", price: 1450, emoji: "🍚", storeIds: SUPERMARKETS },
+  { id: "dhal", name: "Red Dhal", category: "Common Food", unit: "1 kg", price: 540, emoji: "🫘", storeIds: SUPERMARKETS },
+  { id: "coconut", name: "Fresh Coconut", category: "Common Food", unit: "2 pcs", price: 320, emoji: "🥥", storeIds: SUPERMARKETS },
+  { id: "eggs", name: "Farm Eggs", category: "Common Food", unit: "10 pcs", price: 560, emoji: "🥚", storeIds: SUPERMARKETS },
+  { id: "bread", name: "Sandwich Bread", category: "Common Food", unit: "1 loaf", price: 240, emoji: "🍞", storeIds: SUPERMARKETS },
+  { id: "milk", name: "Fresh Milk", category: "Common Food", unit: "1 L", price: 480, emoji: "🥛", storeIds: SUPERMARKETS },
+  // Food (cooked / ready meals, supermarkets)
+  { id: "kottu", name: "Chicken Kottu", category: "Food", unit: "1 plate", price: 850, emoji: "🍛", storeIds: SUPERMARKETS },
+  { id: "riceandcurry", name: "Rice & Curry", category: "Food", unit: "1 plate", price: 650, emoji: "🍲", storeIds: SUPERMARKETS },
+  { id: "hoppers", name: "Egg Hoppers", category: "Food", unit: "3 pcs", price: 420, emoji: "🍳", storeIds: SUPERMARKETS },
+  { id: "stringhopper", name: "String Hoppers", category: "Food", unit: "10 pcs", price: 380, emoji: "🍜", storeIds: SUPERMARKETS },
+  // Fast Food (supermarkets)
+  { id: "burger", name: "Cheese Burger", category: "Fast Food", unit: "1 pc", price: 720, emoji: "🍔", storeIds: SUPERMARKETS },
+  { id: "fries", name: "Crispy Fries", category: "Fast Food", unit: "Large", price: 520, emoji: "🍟", storeIds: SUPERMARKETS },
+  { id: "shorteats", name: "Short Eats Pack", category: "Fast Food", unit: "6 pcs", price: 480, emoji: "🥟", storeIds: SUPERMARKETS },
+  // Pizza Hut menu
+  { id: "ph-margherita", name: "Margherita Pizza", category: "Pizza", unit: "Medium", price: 1690, emoji: "🍕", storeIds: ["pizzahut"] },
+  { id: "ph-chickensupreme", name: "Chicken Supreme", category: "Pizza", unit: "Large", price: 2890, emoji: "🍕", storeIds: ["pizzahut"] },
+  { id: "ph-pepperoni", name: "Pepperoni Feast", category: "Pizza", unit: "Large", price: 2790, emoji: "🍕", storeIds: ["pizzahut"] },
+  { id: "ph-veggie", name: "Veggie Delight", category: "Pizza", unit: "Medium", price: 1790, emoji: "🍕", storeIds: ["pizzahut"] },
+  { id: "ph-garlicbread", name: "Garlic Bread", category: "Fast Food", unit: "4 pcs", price: 690, emoji: "🥖", storeIds: ["pizzahut"] },
+  { id: "ph-wings", name: "Chicken Wings", category: "Fast Food", unit: "6 pcs", price: 1090, emoji: "🍗", storeIds: ["pizzahut"] },
+  // Domino's menu
+  { id: "dm-margherita", name: "Margherita Pizza", category: "Pizza", unit: "Medium", price: 1590, emoji: "🍕", storeIds: ["dominos"] },
+  { id: "dm-cheeseburst", name: "Cheese Burst Pizza", category: "Pizza", unit: "Large", price: 2990, emoji: "🍕", storeIds: ["dominos"] },
+  { id: "dm-chickendom", name: "Chicken Dominator", category: "Pizza", unit: "Large", price: 3190, emoji: "🍕", storeIds: ["dominos"] },
+  { id: "dm-farmhouse", name: "Farmhouse Pizza", category: "Pizza", unit: "Medium", price: 1890, emoji: "🍕", storeIds: ["dominos"] },
+  { id: "dm-garlicbread", name: "Stuffed Garlic Bread", category: "Fast Food", unit: "1 pack", price: 790, emoji: "🥖", storeIds: ["dominos"] },
+  { id: "dm-lavacake", name: "Choco Lava Cake", category: "Fast Food", unit: "2 pcs", price: 590, emoji: "🍫", storeIds: ["dominos"] },
 ];
 
 interface FoodService {
