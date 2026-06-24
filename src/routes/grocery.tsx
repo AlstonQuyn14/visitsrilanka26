@@ -737,7 +737,10 @@ function Grocery() {
             })}
           </div>
         )}
-      </section>
+          </section>
+        </>
+      )}
+
 
       {/* Cart bar */}
       {cartCount > 0 && (
