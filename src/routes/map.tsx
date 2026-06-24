@@ -237,6 +237,7 @@ function MapPage() {
     const g = (window as unknown as Record<string, any>).google;
     if (!g || !panoEl.current) return;
     setStreetViewError(null);
+    setStreetViewLoading(true);
 
     const showPanorama = () => {
       const svService = new g.maps.StreetViewService();
@@ -244,6 +245,7 @@ function MapPage() {
         { location, radius: 200, source: "outdoor" },
         (data: any, status: string) => {
           if (status !== "OK" || !data?.location) {
+            setStreetViewLoading(false);
             setStreetViewError("No Street View imagery available here.");
             return;
           }
@@ -260,6 +262,7 @@ function MapPage() {
           panoRef.current.setPano(data.location.pano);
           panoRef.current.setPov({ heading: 0, pitch: 0 });
           panoRef.current.setVisible(true);
+          setStreetViewLoading(false);
         },
       );
     };
