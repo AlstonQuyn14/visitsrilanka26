@@ -33,6 +33,17 @@ export const Route = createFileRoute("/map")({
       },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    lat:
+      search.lat !== undefined && search.lat !== "" ? Number(search.lat) : undefined,
+    lng:
+      search.lng !== undefined && search.lng !== "" ? Number(search.lng) : undefined,
+    place: typeof search.place === "string" ? search.place : undefined,
+    region: typeof search.region === "string" ? search.region : undefined,
+    category: typeof search.category === "string" ? search.category : undefined,
+    emoji: typeof search.emoji === "string" ? search.emoji : undefined,
+    sv: search.sv === true || search.sv === "1" || search.sv === "true",
+  }),
   component: MapPage,
 });
 
