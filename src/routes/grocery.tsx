@@ -11,6 +11,7 @@ import {
   Clock,
   Truck,
   Phone,
+  ExternalLink,
   CreditCard,
   Banknote,
   Loader2,
