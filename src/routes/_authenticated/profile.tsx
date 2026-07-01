@@ -9,6 +9,8 @@ import {
   X,
   Receipt,
   Heart,
+  Info,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
