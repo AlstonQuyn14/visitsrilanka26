@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/AppShell";
 import {
   User,
@@ -9,6 +9,8 @@ import {
   X,
   Receipt,
   Heart,
+  Info,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,6 +343,23 @@ function ProfilePage() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* About */}
+        <section className="mt-8">
+          <Link
+            to="/about"
+            className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 transition-colors hover:bg-muted/50"
+          >
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+              <Info className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-foreground">About</p>
+              <p className="text-xs text-muted-foreground">Learn more about this app</p>
+            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          </Link>
         </section>
 
         {/* Sign out */}

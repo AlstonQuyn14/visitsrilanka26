@@ -21,6 +21,7 @@ import { Route as GroceryRouteImport } from './routes/grocery'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesRegisterRouteImport } from './routes/guides.register'
@@ -94,6 +95,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -159,6 +165,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
   '/explore': typeof ExploreRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
   '/explore': typeof ExploreRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
   '/explore': typeof ExploreRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
     | '/events'
     | '/explore'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
     | '/events'
     | '/explore'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/auth'
     | '/events'
     | '/explore'
@@ -316,6 +328,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   EventsRoute: typeof EventsRoute
   ExploreRoute: typeof ExploreRoute
@@ -420,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -538,6 +558,7 @@ const GuidesRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   EventsRoute: EventsRoute,
   ExploreRoute: ExploreRoute,
@@ -560,3 +581,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
